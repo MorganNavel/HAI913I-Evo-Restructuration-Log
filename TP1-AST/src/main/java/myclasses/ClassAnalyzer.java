@@ -41,7 +41,6 @@ public class ClassAnalyzer {
 	
 	private void analyze(String source) {
         parser.setSource(source.toCharArray());
-
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         v.setCu(cu);
         cu.accept(v);
@@ -94,7 +93,5 @@ public class ClassAnalyzer {
 	public int getCodeLen() {
 		return this.codeLen;
 	}
-    
-	
 
 }

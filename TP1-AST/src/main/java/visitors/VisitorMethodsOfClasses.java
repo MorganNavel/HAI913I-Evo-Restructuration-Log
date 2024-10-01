@@ -7,6 +7,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import java.util.HashMap;
 import java.util.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -43,12 +46,13 @@ public class VisitorMethodsOfClasses extends Visitor {
         });
     }
 
+    @Override
     public void displayResult() {
         System.out.println("Graphe d'appels de méthodes :");
         for (Map.Entry<String, Map<String, List<String>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
             boolean hasMethodCalls = false;
-            System.out.println("Classe : " + className);
+            System.out.println("-Classe : " + className);
 
             for (Map.Entry<String, List<String>> methodEntry : classEntry.getValue().entrySet()) {
                 String methodName = methodEntry.getKey();
@@ -65,6 +69,35 @@ public class VisitorMethodsOfClasses extends Visitor {
             } else {
                 System.out.println("");
             }
+        }
+    }
+
+    public void createDotFile() {
+        String filename = "callGraph.dot";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+        writer.write("digraph CallGraph {\n");
+        writer.write("\trankdir=LR;\n");  // Représentation du graphe de gauche à droite
+
+        for (Map.Entry<String, Map<String, List<String>>> classEntry : callGraph.entrySet()) {
+            String className = classEntry.getKey();
+
+            for (Map.Entry<String, List<String>> methodEntry : classEntry.getValue().entrySet()) {
+                String methodName = methodEntry.getKey();
+                List<String> calledMethods = methodEntry.getValue();
+
+                if (!calledMethods.isEmpty()) {
+                    for (String calledMethod : calledMethods) {
+                        // Ajouter un lien entre la méthode et celles qu'elle appelle
+                        writer.write(String.format("\t\"%s::%s\" -> \"%s\";%n", className, methodName, calledMethod));
+                    }
+                }
+            }
+        }
+
+        writer.write("}\n");  // Fin du fichier .dot
+        System.out.println("Fichier .dot créé avec succès : " + filename);
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
         }
     }
 

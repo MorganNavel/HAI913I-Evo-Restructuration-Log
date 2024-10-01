@@ -26,7 +26,7 @@ public abstract class Visitor extends ASTVisitor {
 		return "default"; 
 	}
 
-	public void displayResult() {};
+	public void displayResult() {}
 	
 	public CompilationUnit getCu() {
 		return cu;

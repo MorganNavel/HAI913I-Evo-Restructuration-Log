@@ -1,7 +1,6 @@
 package visitors;
 
 import java.util.ArrayList;
-
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class VisitorXMethodsClasses extends Visitor {
@@ -12,13 +11,15 @@ public class VisitorXMethodsClasses extends Visitor {
 		this.threshold = threshold;
 	}
 	
+	@Override
 	public boolean visit(TypeDeclaration node) {
 		if(node.getMethods().length > threshold) {
 			classesSupToThreshold.add(node.getName().toString());
 		}
 		return true;
 	}
-	
+
+	@Override
 	public void displayResult() {
 		System.out.println("Classes supérieurs à "+threshold+" méthode(s) : "+classesSupToThreshold);
 
