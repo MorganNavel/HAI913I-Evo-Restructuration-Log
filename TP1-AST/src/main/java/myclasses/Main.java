@@ -11,7 +11,7 @@ import visitors.VisitorXMethodsClasses;
 
 public class Main {
 	public static void main(String[] args) {
-		ClassAnalyzer ca = new ClassAnalyzer("/home/e20200006119/eclipse-workspace/TP1-AST/src");
+		ClassAnalyzer ca = new ClassAnalyzer("TP1-AST/src/");
 //		VisitorStructure v = new VisitorStructure();
 		VisitorCalculeStatistique v = new VisitorCalculeStatistique();
 //		VisitorXMethodsClasses v = new VisitorXMethodsClasses(2);

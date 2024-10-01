@@ -18,9 +18,9 @@ public class VisitorCalculeStatistique extends Visitor {
 	private ArrayList<String> packages = new ArrayList<String>();
 	public int sumMethodsLines = 0;
 	public int nbAttributes = 0;
-	public HashMap<String,Integer> nbMethodsByClass = new HashMap<String, Integer>();
-	public HashMap<String,Integer> nbAttributesByClass = new HashMap<String, Integer>();
-    HashMap<String, List<String>> classesTop10PercentMethods = new HashMap<String, List<String>>();
+	public HashMap<String,Integer> nbMethodsByClass = new HashMap<>();
+	public HashMap<String,Integer> nbAttributesByClass = new HashMap<>();
+    HashMap<String, List<String>> classesTop10PercentMethods = new HashMap<>();
     private int maxParams = 0;
 
 
@@ -34,7 +34,7 @@ public class VisitorCalculeStatistique extends Visitor {
         nbMethodsByClass.put(node.getName().toString(), node.getMethods().length);
 		this.nbClasses ++;
         nbAttributesByClass.put(node.getName().toString(), node.getFields().length);
-        HashMap<String, Integer> methods = new HashMap<String, Integer>();
+        HashMap<String, Integer> methods = new HashMap<>();
         for(MethodDeclaration m: node.getMethods()) {
         	methods.put(m.getName().toString(), m.getBody().getLength());
         }
@@ -43,6 +43,7 @@ public class VisitorCalculeStatistique extends Visitor {
 
 		return true;
 	}
+
 	public boolean visit(MethodDeclaration node) { 
 		int nbParams = node.parameters().size();
 		if (nbParams > maxParams) maxParams = nbParams;
@@ -50,6 +51,7 @@ public class VisitorCalculeStatistique extends Visitor {
 		this.nbMethods ++;
 		return true;
 	}
+
 	public void displayResult() {
 		System.out.println("Nombres de classes analyser: "+nbClasses);
 		System.out.println("Nombres de methodes analyser: "+nbMethods);
@@ -63,12 +65,13 @@ public class VisitorCalculeStatistique extends Visitor {
 		System.out.println("Top 10% avec le plus de méthodes: "+top10PercentMethod);
 		System.out.println("Top 10% avec le plus d'attribut: "+top10PercentAttributs);
 		ArrayList<String> commons = top10PercentMethod.stream()
-			    .filter(e -> top10PercentAttributs.contains(e))
+			    .filter(top10PercentAttributs::contains)
 			    .collect(Collectors.toCollection(ArrayList::new));
 		System.out.println("Top 10% avec le plus d'attribut & de méthodes : "+commons);
 		System.out.println("Top 10% des methods les plus longue (par classes) : "+this.classesTop10PercentMethods);
 		System.out.println("Méthode avec le plus de paramètres de l'application : "+this.maxParams);
 	}
+	
 	public boolean visit(FieldDeclaration node) { 
 		nbAttributes++;
 		return true;
@@ -100,6 +103,5 @@ public class VisitorCalculeStatistique extends Visitor {
 
         return topClasses;
     }
-
 
 }

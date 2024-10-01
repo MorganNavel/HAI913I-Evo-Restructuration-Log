@@ -14,6 +14,7 @@ public class VisitorStructure extends Visitor {
 	    return false;  
 		
 	}
+
 	public boolean visit(FieldDeclaration node) {
 		node.getModifiers();
     	
@@ -27,6 +28,7 @@ public class VisitorStructure extends Visitor {
 	    
 	    return false;
 	}
+	
 	public boolean visit(TypeDeclaration node) {
 		String className = node.getName().getIdentifier();
 	    System.out.println("Nom de la classe: " + className);

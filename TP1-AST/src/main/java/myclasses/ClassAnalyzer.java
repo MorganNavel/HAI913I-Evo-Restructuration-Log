@@ -17,11 +17,13 @@ public class ClassAnalyzer {
 	private String srcDir = "";
 	private Visitor v;
 	private int codeLen = 0;
+
 	public ClassAnalyzer(String srcDir) {
 		this.srcDir = srcDir;
 		this.parser = ASTParser.newParser(AST.JLS4);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
 	}
+
 	public ClassAnalyzer() {
 		this.parser = ASTParser.newParser(AST.JLS4);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -60,35 +62,38 @@ public class ClassAnalyzer {
             
     	return contenu.toString();
     }
-	 private Set<String> listFilesFromDir(String dir) throws IOException {
-	        File rootDir = new File(dir);
 
-	        File[] files = rootDir.listFiles();
+	private Set<String> listFilesFromDir(String dir) throws IOException {
+	    File rootDir = new File(dir);
 
-	        Set<String> recursiveFoundFiles = new HashSet<>();
-	        Set<String> foundFiles = new HashSet<>();
+	    File[] files = rootDir.listFiles();
 
-	        if (files != null) {
-	            for (File file : files) {
+	    Set<String> recursiveFoundFiles = new HashSet<>();
+	    Set<String> foundFiles = new HashSet<>();
 
-	                if (file.isDirectory()) {
-	                    recursiveFoundFiles.addAll(listFilesFromDir(file.getPath()));
-	                }
-	                if (file.isFile()) {
-	                    String path = file.getPath();
-	                    if(path.endsWith(".java"))	foundFiles.add(path);
-	                }
+	    if (files != null) {
+	        for (File file : files) {
+
+	            if (file.isDirectory()) {
+	                recursiveFoundFiles.addAll(listFilesFromDir(file.getPath()));
+	            }
+	            if (file.isFile()) {
+	                String path = file.getPath();
+	                if(path.endsWith(".java"))	foundFiles.add(path);
 	            }
 	        }
-	        foundFiles.addAll(recursiveFoundFiles);
-	        return foundFiles;
 	    }
-	 public void accept(Visitor v) {
-		 this.v = v;
-	 }
-	 public int getCodeLen() {
-		 return this.codeLen;
-	 }
+	    foundFiles.addAll(recursiveFoundFiles);
+	    return foundFiles;
+	}
+
+	public void accept(Visitor v) {
+		this.v = v;
+	}
+	
+	public int getCodeLen() {
+		return this.codeLen;
+	}
     
 	
 

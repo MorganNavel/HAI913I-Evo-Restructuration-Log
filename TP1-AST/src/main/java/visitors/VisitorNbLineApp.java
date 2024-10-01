@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class VisitorNbLineApp extends Visitor {
 	private int nbLignes = 0;
 
-
 	public boolean visit(TypeDeclaration node) {
 		int startLine = this.getCu().getLineNumber(node.getStartPosition());
         int endLine = this.getCu().getLineNumber(node.getStartPosition() + node.getLength());
@@ -16,6 +15,7 @@ public class VisitorNbLineApp extends Visitor {
         nbLignes += loc;
         return true;
     }
+
 	public boolean visit(ImportDeclaration node) {
 		int startLine = this.getCu().getLineNumber(node.getStartPosition());
         int endLine = this.getCu().getLineNumber(node.getStartPosition() + node.getLength());
@@ -23,6 +23,7 @@ public class VisitorNbLineApp extends Visitor {
         nbLignes += loc;
         return true;
     }
+
 	public boolean visit(PackageDeclaration node) {
 		int startLine = this.getCu().getLineNumber(node.getStartPosition());
         int endLine = this.getCu().getLineNumber(node.getStartPosition() + node.getLength());

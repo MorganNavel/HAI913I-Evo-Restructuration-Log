@@ -25,11 +25,13 @@ public abstract class Visitor extends ASTVisitor {
 		if (Modifier.isProtected(mod)) return "protected";
 		return "default"; 
 	}
+
 	public void displayResult() {};
 	
 	public CompilationUnit getCu() {
 		return cu;
 	}
+	
 	public void setCu(CompilationUnit cu) {
 		this.cu = cu;
 	}
