@@ -53,23 +53,23 @@ public class VisitorCalculeStatistique extends Visitor {
 	}
 
 	public void displayResult() {
-		System.out.println("Nombres de classes analyser: "+nbClasses);
-		System.out.println("Nombres de methodes analyser: "+nbMethods);
+		System.out.println("\nNombres de classes analysées: "+nbClasses);
+		System.out.println("Nombres de methodes analysées: "+nbMethods);
 		System.out.println("Nombres de packages dans l'application: "+packages.size());
 		System.out.println("Nombre moyen de méthode par classe: "+((double) nbMethods/nbClasses));
-		System.out.println("Nombre moyen de ligne par methodes: "+((double) sumMethodsLines/nbMethods));
+		System.out.println("Nombre moyen de ligne par méthodes: "+((double) sumMethodsLines/nbMethods));
 		System.out.println("Nombres d'attributs par classes: "+((double) nbAttributes/nbClasses));
 		List<String> top10PercentMethod = this.getTop10PercentClasses(this.nbMethodsByClass, 0.1);
 		List<String> top10PercentAttributs = this.getTop10PercentClasses(this.nbAttributesByClass, 0.1);
 
-		System.out.println("Top 10% avec le plus de méthodes: "+top10PercentMethod);
-		System.out.println("Top 10% avec le plus d'attribut: "+top10PercentAttributs);
+		System.out.println("\nTop 10% Classes avec le plus de méthodes: "+top10PercentMethod);
+		System.out.println("Top 10% Classes avec le plus d'attributs: "+top10PercentAttributs);
 		ArrayList<String> commons = top10PercentMethod.stream()
 			    .filter(top10PercentAttributs::contains)
 			    .collect(Collectors.toCollection(ArrayList::new));
-		System.out.println("Top 10% avec le plus d'attribut & de méthodes : "+commons);
+		System.out.println("Top 10% Classes avec le plus d'attributs & de méthodes : "+commons);
 		System.out.println("Top 10% des methods les plus longue (par classes) : "+this.classesTop10PercentMethods);
-		System.out.println("Méthode avec le plus de paramètres de l'application : "+this.maxParams);
+		System.out.println("\nMéthode avec le plus de paramètres de l'application : "+this.maxParams);
 	}
 	
 	public boolean visit(FieldDeclaration node) { 

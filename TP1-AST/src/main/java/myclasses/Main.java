@@ -24,7 +24,7 @@ public class Main {
 		try {
 			ca.run();
 			v.displayResult();
-			System.out.println("Nombre de ligne de la codebase: "+ca.getCodeLen()+" ligne(s)");
+			System.out.println("Nombre de ligne de la codebase: "+ca.getCodeLen()+" lignes");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
