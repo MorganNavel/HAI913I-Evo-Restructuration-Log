@@ -1,4 +1,4 @@
-package myclasses;
+package example_package;
 
 
 public abstract class Product {

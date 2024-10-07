@@ -61,9 +61,9 @@ public class VisitorCalculeStatistique extends Visitor {
 		System.out.println("\nNombres de classes analysées: " + nbClasses);
 		System.out.println("Nombres de methodes analysées: " + nbMethods);
 		System.out.println("Nombres de packages dans l'application: " + packages.size());
-		System.out.println("Nombre moyen de méthode par classe: " + getMoyenMethodsByClass());
-		System.out.println("Nombre moyen de ligne par méthodes: " + getMoyenLinesByMethod());
-		System.out.println("Nombres d'attributs par classes: " + getMoyenAttributesByClass());
+		System.out.println("Nombre moyen de méthode par classe: " + getAverageMethodsPerClass());
+		System.out.println("Nombre moyen de ligne par méthodes: " + getAverageLinesPerMethod());
+		System.out.println("Nombres d'attributs par classes: " + getAverageAttributesPerClass());
 		List<String> top10PercentMethod = this.getTop10PercentClasses(this.methodsByClass, 0.1);
 		List<String> top10PercentAttributs = this.getTop10PercentClasses(this.attributesByClass, 0.1);
 
@@ -133,16 +133,16 @@ public class VisitorCalculeStatistique extends Visitor {
 		return sumMethodsLines;
 	}
 
-	public double getMoyenMethodsByClass() {
-		return (double) nbMethods/nbClasses;
+	public double getAverageMethodsPerClass() {
+		return (double) nbMethods / nbClasses;
 	}
 
-    public double getMoyenLinesByMethod() {
-        return (double) sumMethodsLines/nbMethods;
-    }
+	public double getAverageLinesPerMethod() {
+		return (double) sumMethodsLines / nbMethods;
+	}
 
-	public double getMoyenAttributesByClass() {
-		return (double) nbAttributes/nbClasses;
+	public double getAverageAttributesPerClass() {
+		return (double) nbAttributes / nbClasses;
 	}
 
 	public HashMap<String, Integer> getMethodsByClass() {
@@ -157,12 +157,11 @@ public class VisitorCalculeStatistique extends Visitor {
 		return classesTop10PercentMethods;
 	}
 
-    public int getMaxParams() {
-        return maxParams;
-    }
+	public int getMaxParams() {
+		return maxParams;
+	}
 
 	public String getMethodsMaxParams() {
 		return methodsMaxParams;
 	}
-
 }

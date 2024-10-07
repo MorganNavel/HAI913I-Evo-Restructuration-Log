@@ -72,11 +72,12 @@ public class VisitorMethodsOfClasses extends Visitor {
         }
     }
 
+    // Method to create a .dot file representing the call graph
     public void createDotFile() {
         String filename = "callGraph.dot";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
         writer.write("digraph CallGraph {\n");
-        writer.write("\trankdir=LR;\n");  // Représentation du graphe de gauche à droite
+        writer.write("\trankdir=LR;\n");  // Representation left to right
 
         for (Map.Entry<String, Map<String, List<String>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
@@ -85,16 +86,13 @@ public class VisitorMethodsOfClasses extends Visitor {
                 String methodName = methodEntry.getKey();
                 List<String> calledMethods = methodEntry.getValue();
 
-                if (!calledMethods.isEmpty()) {
-                    for (String calledMethod : calledMethods) {
-                        // Ajouter un lien entre la méthode et celles qu'elle appelle
-                        writer.write(String.format("\t\"%s::%s\" -> \"%s\";%n", className, methodName, calledMethod));
-                    }
+                for (String calledMethod : calledMethods) {
+                    writer.write(String.format("\t\"%s::%s\" -> \"%s\";%n", className, methodName, calledMethod));
                 }
             }
         }
 
-        writer.write("}\n");  // Fin du fichier .dot
+        writer.write("}\n");
         System.out.println("Fichier .dot créé avec succès : " + filename);
         } catch (IOException e) {
             System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());

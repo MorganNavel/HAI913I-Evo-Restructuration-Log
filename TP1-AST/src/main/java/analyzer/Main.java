@@ -1,24 +1,15 @@
-package myclasses;
+package analyzer;
 
 import java.io.IOException;
 
 import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
-import visitors.VisitorNbLineApp;
-import visitors.VisitorPackage;
-import visitors.VisitorStructure;
-import visitors.VisitorXMethodsClasses;
 
 public class Main {
 	public static void main(String[] args) {
 		ClassAnalyzer ca = new ClassAnalyzer("TP1-AST/src/");
-//		VisitorStructure v = new VisitorStructure();
 		VisitorCalculeStatistique v = new VisitorCalculeStatistique();
-//		VisitorXMethodsClasses v = new VisitorXMethodsClasses(2);
-
-//		VisitorNbLineApp v = new VisitorNbLineApp();
-//		VisitorPackage v = new VisitorPackage();
-//		VisitorMethodsOfClasses v = new VisitorMethodsOfClasses();
+		VisitorMethodsOfClasses vm = new VisitorMethodsOfClasses();
 
 		ca.accept(v);
 		try {

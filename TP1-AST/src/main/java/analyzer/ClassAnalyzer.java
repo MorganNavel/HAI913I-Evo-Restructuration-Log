@@ -1,4 +1,4 @@
-package myclasses;
+package analyzer;
 
 import java.io.BufferedReader;
 import java.io.File;

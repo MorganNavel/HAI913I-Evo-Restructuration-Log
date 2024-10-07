@@ -1,41 +1,37 @@
 package cli;
 
-import myclasses.ClassAnalyzer;
 import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import static cli.Utils.isNumeric;
+import analyzer.ClassAnalyzer;
 
 public class UserInterface extends Cli {
 
-    public UserInterface() {
-        super();
-    }
-
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String appDirectory = chooseAppDirectory(scanner);
-        if (appDirectory == null) {
-            System.out.println(DIRECTORY_ERROR);
-            System.out.println("Fermeture de l'application. Au revoir!");
-            return;
-        }
+        try (Scanner scanner = new Scanner(System.in)) {
+            String appDirectory = chooseAppDirectory(scanner);
+            if (appDirectory == null) {
+                System.out.println(DIRECTORY_ERROR);
+                System.out.println("Fermeture de l'application. Au revoir!");
+                return;
+            }
 
-        ClassAnalyzer analyzer = new ClassAnalyzer(appDirectory);
-        VisitorCalculeStatistique visitor = new VisitorCalculeStatistique();
-        VisitorMethodsOfClasses callGraphVisitor = new VisitorMethodsOfClasses();
-        
+            ClassAnalyzer analyzer = new ClassAnalyzer(appDirectory);
+            VisitorCalculeStatistique visitor = new VisitorCalculeStatistique();
+            VisitorMethodsOfClasses callGraphVisitor = new VisitorMethodsOfClasses();
 
-        boolean running = true;
-        while (running) {
-            printMenu();
-            String input = scanner.nextLine();
-            try {
-                running = handleUserChoice(input, scanner, analyzer, visitor, callGraphVisitor);
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
+            boolean running = true;
+            while (running) {
+                printMenu();
+                String input = scanner.nextLine();
+                try {
+                    running = handleUserChoice(input, scanner, analyzer, visitor, callGraphVisitor);
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                }
             }
         }
     }
@@ -67,7 +63,6 @@ public class UserInterface extends Cli {
                     analyzer.accept(callGraphVisitor);
                     analyzer.run();
                     printMenuEx2();
-                    //callGraphVisitor.displayResult();
                     handleEx2Choice(scanner, callGraphVisitor);
                     break;
                 case 0:
@@ -82,14 +77,13 @@ public class UserInterface extends Cli {
         }
         return true;
     }
-   
 
     public static void printMenu() {
         System.out.println("\n--- Menu Principal ---");
         System.out.println("1: Exercice 1 - Analyse Code Source");
         System.out.println("2: Exercice 2 - Graphe D'appel");
         System.out.println("0: Quitter");
-        System.out.print("Choisissez une option: ");
+        System.out.print(CHOOSE_OPTION_PROMPT);
     }
 
     private static void printMenuEx1() {
@@ -108,7 +102,7 @@ public class UserInterface extends Cli {
         System.out.println("12: Les 10% des méthodes avec le plus grand nombre de lignes de code.");
         System.out.println("13: Nombre maximal de paramètres parmi toutes les méthodes.");
         System.out.println("0: Retour au menu principal.\n");
-        System.out.print("Choisissez une option: ");
+        System.out.print(CHOOSE_OPTION_PROMPT);
     }
 
     private static void printMenuEx2() {
@@ -116,8 +110,6 @@ public class UserInterface extends Cli {
         System.out.println("1: Afficher le graphe d'appels de méthodes.");
         System.out.println("2: Créer le fichier .dot du graphe d'appels.");
         System.out.println("0: Retour au menu principal.\n");
-        System.out.print("Choisissez une option: ");
+        System.out.print(CHOOSE_OPTION_PROMPT);
     }
-
-    
 }

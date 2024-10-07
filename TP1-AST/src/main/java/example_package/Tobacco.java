@@ -1,4 +1,4 @@
-package myclasses;
+package example_package;
 
 
 public class Tobacco extends Product {
