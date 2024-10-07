@@ -39,7 +39,8 @@ Ce TP est divisé en 2 exercices :
 - Maven
 
 ### Installation
-1. Télécharger le zip du projet
+1. Télécharger le zip du projet à l'adresse suivante :  
+(https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP1_part2/HAI913I_TP1part2_GILLES_NAVEL.zip)
 
 2. Décompresser le projet
 
