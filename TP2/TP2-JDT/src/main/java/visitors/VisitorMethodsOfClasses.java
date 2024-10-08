@@ -24,22 +24,25 @@ public class VisitorMethodsOfClasses extends Visitor {
             callGraph.putIfAbsent(className, new HashMap<>());
             callGraph.get(className).put(methodName, new ArrayList<>());
 
-            saveCalledMethods(method, className);
+            saveCalledMethods(method, className, node);
         }
         return true;
     }
 
-    private void saveCalledMethods(MethodDeclaration node, String className) {
+    private void saveCalledMethods(MethodDeclaration node, String className, TypeDeclaration classDeclaration) {
         node.accept(new ASTVisitor() {
             @Override
             public boolean visit(MethodInvocation methodInvocation) {
+                Expression expr = methodInvocation.getExpression();
+                String receiverType = resolveType(expr, className, node, classDeclaration); 
+
                 String calledMethodName = methodInvocation.getName().getFullyQualifiedName();
 
                 String calledClassName = getString(methodInvocation);
 
                 // Enregistrer l'appel de méthode avec la classe appelante et la classe appelée
                 String fullMethodCall = className + "::" + node.getName().getFullyQualifiedName() + " ---> "
-                                        + calledClassName + "::" + calledMethodName;
+                                        + receiverType + "::" + calledMethodName;
 
                 List<String> methodsPreviouslyCalled = callGraph.get(className).get(node.getName().getFullyQualifiedName());
                 if (!methodsPreviouslyCalled.contains(fullMethodCall)) {
@@ -121,5 +124,68 @@ public class VisitorMethodsOfClasses extends Visitor {
             System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
         }
     }
+    private String resolveType(Expression expr, String className, MethodDeclaration currentMethod, TypeDeclaration currentClass) {
+    	if(expr == null) return "Unknown";
+    	if(expr.toString().equals("System.out")) {
+    		return "Unknown";
+    	}
+    	// Si c'est "this", retourne le nom de la classe courante
+        if (expr.toString().equals("this")) {
+            return className;
+        }
+
+        // Vérifie si c'est un appel à une méthode statique (en supposant que la première lettre est une majuscule)
+        if (Character.isUpperCase(expr.toString().charAt(0))) {
+            return expr.toString();  // Le nom de la classe
+        }
+
+        // Si l'expression est une variable, vérifie si elle est déclarée localement dans la méthode
+        String variableType = getVariableTypeInMethod(expr.toString(), currentMethod);
+        if (!variableType.equals("Unknown")) {
+            return variableType;
+        }
+
+        // Sinon, vérifie si c'est un attribut de la classe
+        String attributeType = getClassOfAttributes(expr.toString(), currentClass);
+        if (!attributeType.equals("Unknown")) {
+            return attributeType;
+        }
+
+        // Par défaut, retourne "Unknown"
+        return "Unknown";
+    }
+
+    // Recherche une variable dans les déclarations locales de la méthode
+    private String getVariableTypeInMethod(String variableName, MethodDeclaration method) {
+        // Parcourt les déclarations de variables dans la méthode pour trouver une correspondance
+        for (Object statement : method.getBody().statements()) {
+            if (statement instanceof VariableDeclarationStatement) {
+                VariableDeclarationStatement varDecl = (VariableDeclarationStatement) statement;
+                for (Object fragment : varDecl.fragments()) {
+                    VariableDeclarationFragment varFragment = (VariableDeclarationFragment) fragment;
+                    System.out.println(varDecl.getType());
+                    if (varFragment.getName().getFullyQualifiedName().equals(variableName)) {
+                        return varDecl.getType().toString();  // Retourne le type de la variable locale
+                    }
+                }
+            }
+        }
+        return "Unknown";
+    }
+
+    // Recherche le type d'un attribut dans la classe
+    private String getClassOfAttributes(String attributeName, TypeDeclaration currentClass) {
+        // Parcourt les champs (attributs) de la classe pour trouver une correspondance
+        for (FieldDeclaration field : currentClass.getFields()) {
+            for (Object fragment : field.fragments()) {
+                VariableDeclarationFragment varFragment = (VariableDeclarationFragment) fragment;
+                if (varFragment.getName().getFullyQualifiedName().equals(attributeName)) {
+                    return field.getType().toString();  // Retourne le type de l'attribut de la classe
+                }
+            }
+        }
+        return "Unknown";
+    }
+
 
 }
