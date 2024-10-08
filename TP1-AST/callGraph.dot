@@ -1,0 +1,7 @@
+digraph CallGraph {
+	rankdir=LR;
+	"Personne::Personne" -> "setName";
+	"Personne::Personne" -> "setAge";
+	"Product::Product" -> "setName";
+	"Product::Product" -> "setPrice";
+}

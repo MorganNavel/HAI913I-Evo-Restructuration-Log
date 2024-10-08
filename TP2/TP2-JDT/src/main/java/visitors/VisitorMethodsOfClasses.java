@@ -9,9 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class VisitorMethodsOfClasses extends Visitor {
-    private Map<String, Map<String, List<String>>> callGraph = new HashMap<>();
+    private Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
 
     @Override
     public boolean visit(TypeDeclaration node) {
@@ -31,58 +32,41 @@ public class VisitorMethodsOfClasses extends Visitor {
 
     private void saveCalledMethods(MethodDeclaration node, String className, TypeDeclaration classDeclaration) {
         node.accept(new ASTVisitor() {
+
             @Override
             public boolean visit(MethodInvocation methodInvocation) {
-                Expression expr = methodInvocation.getExpression();
-                String receiverType = resolveType(expr, className, node, classDeclaration); 
-
                 String calledMethodName = methodInvocation.getName().getFullyQualifiedName();
+                Expression expr = methodInvocation.getExpression();
+                
+                String receiverType = resolveType(expr, node, className, classDeclaration);
+                
 
-                String calledClassName = getString(methodInvocation);
+                Map<String, String> methodCallInfo = new HashMap<>();
+                methodCallInfo.put("methodName", calledMethodName);
+                methodCallInfo.put("receiverType", receiverType);
 
-                // Enregistrer l'appel de méthode avec la classe appelante et la classe appelée
-                String fullMethodCall = className + "::" + node.getName().getFullyQualifiedName() + " ---> "
-                                        + receiverType + "::" + calledMethodName;
-
-                List<String> methodsPreviouslyCalled = callGraph.get(className).get(node.getName().getFullyQualifiedName());
-                if (!methodsPreviouslyCalled.contains(fullMethodCall)) {
-                    methodsPreviouslyCalled.add(fullMethodCall);
-                }
-
+                List<Map<String, String>> methodsPreviouslyCalled = callGraph.get(className).get(node.getName().getFullyQualifiedName());
+                methodsPreviouslyCalled.add(methodCallInfo);
+                
                 return super.visit(methodInvocation);
             }
 
-            private String getString(MethodInvocation methodInvocation) {
-                Expression expression = methodInvocation.getExpression();
-                String calledClassName = "unknown";
-
-                if (expression != null) {
-                    ITypeBinding typeBinding = expression.resolveTypeBinding();
-                    if (typeBinding != null) {
-                        calledClassName = typeBinding.getQualifiedName();
-                    }
-                }
 
 
-
-
-
-                return calledClassName;
-            }
         });
     }
 
     @Override
     public void displayResult() {
         System.out.println("Graphe d'appels de méthodes :");
-        for (Map.Entry<String, Map<String, List<String>>> classEntry : callGraph.entrySet()) {
+        for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
             boolean hasMethodCalls = false;
             System.out.println("-Classe : " + className);
 
-            for (Map.Entry<String, List<String>> methodEntry : classEntry.getValue().entrySet()) {
+            for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
                 String methodName = methodEntry.getKey();
-                List<String> calledMethods = methodEntry.getValue();
+                List<Map<String, String>> calledMethods = methodEntry.getValue();
                 
                 if (!calledMethods.isEmpty()) {
                     System.out.println("\tMéthode : " + methodName + " ----> : " + calledMethods);
@@ -105,15 +89,19 @@ public class VisitorMethodsOfClasses extends Visitor {
         writer.write("digraph CallGraph {\n");
         writer.write("\trankdir=LR;\n");  // Representation left to right
 
-        for (Map.Entry<String, Map<String, List<String>>> classEntry : callGraph.entrySet()) {
+        for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
 
-            for (Map.Entry<String, List<String>> methodEntry : classEntry.getValue().entrySet()) {
+            for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
                 String methodName = methodEntry.getKey();
-                List<String> calledMethods = methodEntry.getValue();
+                List<Map<String, String>> calledMethods = methodEntry.getValue();
 
-                for (String calledMethod : calledMethods) {
-                    writer.write(String.format("\t\"%s::%s\" -> \"%s\";%n", className, methodName, calledMethod));
+                for (Map<String, String> calledMethod : calledMethods) {
+                	String receiverType = calledMethod.get("receiverType");
+                	String method = calledMethod.get("methodName");
+                	if(receiverType != "Unknown") {                		
+                		writer.write(String.format("\t \"%s::%s\" -> \"%s\" [label=\"%s\"];%n", className, methodName, receiverType, method ));
+                	}
                 }
             }
         }
@@ -124,7 +112,7 @@ public class VisitorMethodsOfClasses extends Visitor {
             System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
         }
     }
-    private String resolveType(Expression expr, String className, MethodDeclaration currentMethod, TypeDeclaration currentClass) {
+    private String resolveType(Expression expr, MethodDeclaration method, String className ,TypeDeclaration currentClass) {
     	if(expr == null) return "Unknown";
     	if(expr.toString().equals("System.out")) {
     		return "Unknown";
@@ -140,7 +128,7 @@ public class VisitorMethodsOfClasses extends Visitor {
         }
 
         // Si l'expression est une variable, vérifie si elle est déclarée localement dans la méthode
-        String variableType = getVariableTypeInMethod(expr.toString(), currentMethod);
+        String variableType = getVariableTypeInMethod(expr.toString(), method);
         if (!variableType.equals("Unknown")) {
             return variableType;
         }
@@ -163,7 +151,6 @@ public class VisitorMethodsOfClasses extends Visitor {
                 VariableDeclarationStatement varDecl = (VariableDeclarationStatement) statement;
                 for (Object fragment : varDecl.fragments()) {
                     VariableDeclarationFragment varFragment = (VariableDeclarationFragment) fragment;
-                    System.out.println(varDecl.getType());
                     if (varFragment.getName().getFullyQualifiedName().equals(variableName)) {
                         return varDecl.getType().toString();  // Retourne le type de la variable locale
                     }

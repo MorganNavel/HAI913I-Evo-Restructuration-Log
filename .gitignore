@@ -32,3 +32,4 @@ target/
 
 ### Java Classes ###
 *.class
+/.metadata/

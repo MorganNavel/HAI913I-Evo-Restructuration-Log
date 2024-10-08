@@ -1,0 +1,25 @@
+digraph CallGraph {
+	rankdir=LR;
+	 "VisitorMethodsOfClasses::displayResult" -> "Map<String,Map<String,List<Map<String,String>>>>" [label="entrySet"];
+	 "VisitorMethodsOfClasses::saveCalledMethods" -> "Map<String,Map<String,List<Map<String,String>>>>" [label="get"];
+	 "VisitorMethodsOfClasses::resolveType" -> "Character" [label="isUpperCase"];
+	 "VisitorMethodsOfClasses::resolveType" -> "String" [label="equals"];
+	 "VisitorMethodsOfClasses::resolveType" -> "String" [label="equals"];
+	 "VisitorMethodsOfClasses::visit" -> "Map<String,Map<String,List<Map<String,String>>>>" [label="putIfAbsent"];
+	 "VisitorMethodsOfClasses::visit" -> "Map<String,Map<String,List<Map<String,String>>>>" [label="get"];
+	 "VisitorMethodsOfClasses::createDotFile" -> "Map<String,Map<String,List<Map<String,String>>>>" [label="entrySet"];
+	 "VisitorMethodsOfClasses::createDotFile" -> "String" [label="format"];
+	 "Visitor::getEncapsulation" -> "Modifier" [label="isPublic"];
+	 "Visitor::getEncapsulation" -> "Modifier" [label="isPrivate"];
+	 "Visitor::getEncapsulation" -> "Modifier" [label="isProtected"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "ArrayList<Integer>" [label="isEmpty"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "ArrayList<Integer>" [label="sort"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "Collections" [label="reverseOrder"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "Math" [label="ceil"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "ArrayList<Integer>" [label="size"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "ArrayList<Integer>" [label="get"];
+	 "VisitorCalculeStatistique::getTop10PercentClasses" -> "List<String>" [label="add"];
+	 "VisitorCalculeStatistique::getNbPackages" -> "ArrayList<String>" [label="size"];
+	 "VisitorCalculeStatistique::visit" -> "ArrayList<String>" [label="contains"];
+	 "VisitorCalculeStatistique::visit" -> "ArrayList<String>" [label="add"];
+}
