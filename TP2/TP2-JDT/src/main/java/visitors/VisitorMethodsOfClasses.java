@@ -10,16 +10,12 @@ import java.io.IOException;
 import java.util.Map.Entry;
 
 public class VisitorMethodsOfClasses extends Visitor {
-<<<<<<< Updated upstream
     private static final String UNKNOWN = "Unknown";
     private final Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
-=======
-    private Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
     private ArrayList<String> classes = new ArrayList<>();
     private HashMap<String,Double> couplings = new HashMap<>();
     
 
->>>>>>> Stashed changes
     @Override
     public boolean visit(TypeDeclaration node) {
         String className = node.getName().getFullyQualifiedName();
@@ -202,6 +198,7 @@ public class VisitorMethodsOfClasses extends Visitor {
         }
         return UNKNOWN;
     }
+
  // Nombre de relations (appels) entre les méthodes de deux classes A et B
     private int countCallsBetweenClasses(String classA, String classB) {
         int count = 0;
@@ -212,7 +209,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                     List<Map<String, String>> calledMethods = methodEntry.getValue();
                     for (Map<String, String> calledMethod : calledMethods) {
                         String receiverType = calledMethod.get("receiverType");
-                        if (receiverType.equals("Unknown")) continue;
+                        if (receiverType.equals(UNKNOWN)) continue;
                         if ((className.equals(classA) && classB.equals(receiverType)) || (className.equals(classB) && classA.equals(receiverType))) {
                             count++;
                         }
@@ -230,7 +227,7 @@ public class VisitorMethodsOfClasses extends Visitor {
             for (List<Map<String, String>> calledMethods : methodsInClass.values()) {
                 for (Map<String, String> calledMethod : calledMethods) {
                     String receiverType = calledMethod.get("receiverType");
-                    if (!receiverType.equals("Unknown")) {
+                    if (!receiverType.equals(UNKNOWN)) {
                         count++;
                     }
                 }
@@ -238,6 +235,7 @@ public class VisitorMethodsOfClasses extends Visitor {
         }
         return count;
     }
+
 
     // Calcul du couplage entre deux classes
     public double calculateCoupling(String classA, String classB) {
@@ -266,13 +264,6 @@ public class VisitorMethodsOfClasses extends Visitor {
     private void displayCoupling() {
     	System.out.println(couplings);
     }
-
-
-
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
 
 }
