@@ -269,6 +269,10 @@ public class VisitorMethodsOfClasses extends Visitor {
 
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 
 }
