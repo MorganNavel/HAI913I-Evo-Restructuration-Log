@@ -26,7 +26,6 @@ public class VisitorCalculeStatistique extends Visitor {
 
 	@Override
 	public boolean visit(TypeDeclaration node) { 
-		
 		int startLine = this.getCu().getLineNumber(node.getStartPosition());
         int endLine = this.getCu().getLineNumber(node.getStartPosition() + node.getLength());
         int loc = endLine - startLine + 1;

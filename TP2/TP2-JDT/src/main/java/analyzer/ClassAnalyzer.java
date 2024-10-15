@@ -64,7 +64,9 @@ public class ClassAnalyzer {
         } else {
             System.out.println("Binding recovery failed or not enabled.");
         }
+        v.setCu(cu);
         cu.accept(v);
+        
     }
 
 	private Set<String> listFilesFromDir(String dir) throws IOException {
