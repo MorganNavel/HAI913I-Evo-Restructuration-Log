@@ -157,7 +157,8 @@ public class VisitorMethodsOfClasses extends Visitor {
             	System.out.println(classes);
             	String [] splittedClasses =  classes.split("-");
 				try {
-					writer.write(String.format("\t \"%s\" - \"%s\" [label=\"%s\"];%n", splittedClasses[0], splittedClasses[1], couplage ));
+					writer.write(String.format("\t \"%s\" -> \"%s\" [label=\"%s\"];%n", splittedClasses[0], splittedClasses[1], couplage ));
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
