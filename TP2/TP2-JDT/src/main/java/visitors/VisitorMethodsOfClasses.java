@@ -47,7 +47,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                 Map<String, String> methodCallInfo = new HashMap<>();
                 methodCallInfo.put("methodName", calledMethodName);
                 methodCallInfo.put("receiverType", receiverType);
-                if(!classes.contains(receiverType) && receiverType != "Unknown") classes.add(receiverType);
+                if(!classes.contains(receiverType) && receiverType != UNKNOWN) classes.add(receiverType);
 
 
                 List<Map<String, String>> methodsPreviouslyCalled = callGraph.get(className).get(node.getName().getFullyQualifiedName());
