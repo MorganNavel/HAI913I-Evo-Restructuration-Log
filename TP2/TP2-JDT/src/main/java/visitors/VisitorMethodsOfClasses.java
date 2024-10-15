@@ -10,11 +10,20 @@ import java.io.IOException;
 import java.util.Map.Entry;
 
 public class VisitorMethodsOfClasses extends Visitor {
+<<<<<<< Updated upstream
     private static final String UNKNOWN = "Unknown";
     private final Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
+=======
+    private Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
+    private ArrayList<String> classes = new ArrayList<>();
+    private HashMap<String,Double> couplings = new HashMap<>();
+    
+
+>>>>>>> Stashed changes
     @Override
     public boolean visit(TypeDeclaration node) {
         String className = node.getName().getFullyQualifiedName();
+        if(!classes.contains(className)) classes.add(className);
 
         MethodDeclaration[] methods = node.getMethods();
 
@@ -42,6 +51,8 @@ public class VisitorMethodsOfClasses extends Visitor {
                 Map<String, String> methodCallInfo = new HashMap<>();
                 methodCallInfo.put("methodName", calledMethodName);
                 methodCallInfo.put("receiverType", receiverType);
+                if(!classes.contains(receiverType) && receiverType != "Unknown") classes.add(receiverType);
+
 
                 List<Map<String, String>> methodsPreviouslyCalled = callGraph.get(className).get(node.getName().getFullyQualifiedName());
                 methodsPreviouslyCalled.add(methodCallInfo);
@@ -54,6 +65,8 @@ public class VisitorMethodsOfClasses extends Visitor {
 
     @Override
     public void displayResult() {
+    	System.out.println(classes);
+    	this.processApplicationCoupling();
         System.out.println("Graphe d'appels de méthodes :");
         for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
@@ -74,6 +87,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                 System.out.println("\tAucune méthode n'appelle d'autres méthodes dans cette classe.\n");
             }
         }
+        displayCoupling();
     }
 
     // Method to create the .dot and .png files of the call graph
@@ -178,16 +192,83 @@ public class VisitorMethodsOfClasses extends Visitor {
 
     // Recherche le type d'un attribut dans la classe
     private String getClassOfAttributes(String attributeName, TypeDeclaration currentClass) {
-        // Parcourt les champs (attributs) de la classe pour trouver une correspondance
         for (FieldDeclaration field : currentClass.getFields()) {
             for (Object fragment : field.fragments()) {
                 VariableDeclarationFragment varFragment = (VariableDeclarationFragment) fragment;
                 if (varFragment.getName().getFullyQualifiedName().equals(attributeName)) {
-                    return field.getType().toString();  // Retourne le type de l'attribut de la classe
+                    return field.getType().toString();
                 }
             }
         }
         return UNKNOWN;
     }
+ // Nombre de relations (appels) entre les méthodes de deux classes A et B
+    private int countCallsBetweenClasses(String classA, String classB) {
+        int count = 0;
+        for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
+            String className = classEntry.getKey();
+            if (className.equals(classA) || className.equals(classB)) {
+                for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
+                    List<Map<String, String>> calledMethods = methodEntry.getValue();
+                    for (Map<String, String> calledMethod : calledMethods) {
+                        String receiverType = calledMethod.get("receiverType");
+                        if (receiverType.equals("Unknown")) continue;
+                        if ((className.equals(classA) && classB.equals(receiverType)) || (className.equals(classB) && classA.equals(receiverType))) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    // Nombre total de relations (appels) entre les méthodes de toutes les classes
+    private int countTotalBinaryCalls() {
+        int count = 0;
+        for (Map<String, List<Map<String, String>>> methodsInClass : callGraph.values()) {
+            for (List<Map<String, String>> calledMethods : methodsInClass.values()) {
+                for (Map<String, String> calledMethod : calledMethods) {
+                    String receiverType = calledMethod.get("receiverType");
+                    if (!receiverType.equals("Unknown")) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    // Calcul du couplage entre deux classes
+    public double calculateCoupling(String classA, String classB) {
+        int callsBetweenAandB = countCallsBetweenClasses(classA, classB);
+        int totalBinaryCalls = countTotalBinaryCalls();
+
+        if (totalBinaryCalls == 0) {
+            return 0.0;
+        }
+
+        return (double) callsBetweenAandB / totalBinaryCalls;
+    }
+
+    public void processApplicationCoupling() {
+        for (String classA : classes) {
+            for (String classB : classes) {
+                if (!classA.equals(classB)) {
+                    double coupling = calculateCoupling(classA, classB);
+                    if(!couplings.containsKey(classA+"-"+classB) && !couplings.containsKey(classB+"-"+classA) && coupling>0) {
+                    	couplings.put(classA+"-"+classB, coupling);
+                    }
+                }
+            }
+        }
+    }
+    private void displayCoupling() {
+    	System.out.println(couplings);
+    }
+
+
+
+
 
 }
