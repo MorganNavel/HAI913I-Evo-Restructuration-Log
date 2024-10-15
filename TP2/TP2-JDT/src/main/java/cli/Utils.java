@@ -58,6 +58,7 @@ public class Utils {
         System.out.println("\n--- Exercice 2 : Graphe D'appel ---");
         System.out.println("1: Afficher le graphe d'appels de méthodes.");
         System.out.println("2: Créer le fichier .dot et png du graphe d'appels.");
+        System.out.println("3: Créer le fichier .dot et png du graphe de couplage entre classe.");
         System.out.println("0: Retour au menu principal.\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }

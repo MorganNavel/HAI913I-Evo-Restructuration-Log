@@ -122,6 +122,9 @@ public class Cli {
                 case 2:
                     callGraphVisitor.createCallGraphFile();
                     break;
+                case 3:
+                	callGraphVisitor.createCouplingGraph();
+                	break;
                 case 0:
                     stayInEx2 = false;
                     System.out.println("Retour au menu principal.");

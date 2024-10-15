@@ -62,7 +62,6 @@ public class VisitorMethodsOfClasses extends Visitor {
     @Override
     public void displayResult() {
     	System.out.println(classes);
-    	this.processApplicationCoupling();
         System.out.println("Graphe d'appels de méthodes :");
         for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
@@ -136,6 +135,51 @@ public class VisitorMethodsOfClasses extends Visitor {
         } catch (IOException | InterruptedException e) {
             System.out.println("Erreur lors de la création du fichier .png : " + e.getMessage());
         }
+    }
+    public void createCouplingGraph() {
+    	String directoryName = "couplingGraph";
+        String dotFilename = directoryName + "/couplingGraph.dot";
+        String pngFilename = directoryName + "/couplingGraph.png";
+        this.processApplicationCoupling();
+
+        
+        // Create the directory if it doesn't exist
+        File directory = new File(directoryName);
+        if(!directory.exists()) {
+            directory.mkdir();
+        }
+
+        // Create the .dot file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilename))) {
+            writer.write("digraph CouplingGraph {\n");
+            writer.write("\trankdir=LR;\n");  // Representation left to right
+            this.couplings.forEach((classes, couplage) -> {
+            	System.out.println(classes);
+            	String [] splittedClasses =  classes.split("-");
+				try {
+					writer.write(String.format("\t \"%s\" - \"%s\" [label=\"%s\"];%n", splittedClasses[0], splittedClasses[1], couplage ));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+            	
+            });
+            System.out.println(this.couplings);
+            writer.write("}\n");
+            System.out.println("\nFichier .dot créé avec succès : " + dotFilename);
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
+        }
+
+        // Create the .png file from the .dot file
+        try {
+            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFilename, "-o", pngFilename);
+            Process p = pb.start();
+            p.waitFor();
+            System.out.println("Fichier .png créé avec succès : " + pngFilename);
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Erreur lors de la création du fichier .png : " + e.getMessage());
+        }
+
     }
 
     private String resolveType(Expression expr, MethodDeclaration method, String className, TypeDeclaration currentClass) {
@@ -260,6 +304,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                 }
             }
         }
+        System.out.println("processApplicationCoupling: "+this.couplings);
     }
     private void displayCoupling() {
     	System.out.println(couplings);
