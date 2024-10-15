@@ -2,18 +2,16 @@ package visitors;
 
 import org.eclipse.jdt.core.dom.*;
 
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Map.Entry;
 
 public class VisitorMethodsOfClasses extends Visitor {
-    private Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
-
+    private static final String UNKNOWN = "Unknown";
+    private final Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
     @Override
     public boolean visit(TypeDeclaration node) {
         String className = node.getName().getFullyQualifiedName();
@@ -50,11 +48,9 @@ public class VisitorMethodsOfClasses extends Visitor {
                 
                 return super.visit(methodInvocation);
             }
-
-
-
         });
     }
+
 
     @Override
     public void displayResult() {
@@ -67,7 +63,7 @@ public class VisitorMethodsOfClasses extends Visitor {
             for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
                 String methodName = methodEntry.getKey();
                 List<Map<String, String>> calledMethods = methodEntry.getValue();
-                
+
                 if (!calledMethods.isEmpty()) {
                     System.out.println("\tMéthode : " + methodName + " ----> : " + calledMethods);
                     hasMethodCalls = true;
@@ -76,48 +72,68 @@ public class VisitorMethodsOfClasses extends Visitor {
 
             if (!hasMethodCalls) {
                 System.out.println("\tAucune méthode n'appelle d'autres méthodes dans cette classe.\n");
-            } else {
-                System.out.println();
             }
         }
     }
 
-    // Method to create a .dot file representing the call graph
-    public void createDotFile() {
-        String filename = "callGraph.dot";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-        writer.write("digraph CallGraph {\n");
-        writer.write("\trankdir=LR;\n");  // Representation left to right
+    // Method to create the .dot and .png files of the call graph
+    public void createCallGraphFile() {
+        String directoryName = "callGraph";
+        String dotFilename = directoryName + "/callGraph.dot";
+        String pngFilename = directoryName + "/callGraph.png";
 
-        for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
-            String className = classEntry.getKey();
-
-            for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
-                String methodName = methodEntry.getKey();
-                List<Map<String, String>> calledMethods = methodEntry.getValue();
-
-                for (Map<String, String> calledMethod : calledMethods) {
-                	String receiverType = calledMethod.get("receiverType");
-                	String method = calledMethod.get("methodName");
-                	if(receiverType != "Unknown") {                		
-                		writer.write(String.format("\t \"%s::%s\" -> \"%s\" [label=\"%s\"];%n", className, methodName, receiverType, method ));
-                	}
-                }
-            }
+        
+        // Create the directory if it doesn't exist
+        File directory = new File(directoryName);
+        if(!directory.exists()) {
+            directory.mkdir();
         }
 
-        writer.write("}\n");
-        System.out.println("Fichier .dot créé avec succès : " + filename);
+        // Create the .dot file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilename))) {
+            writer.write("digraph CallGraph {\n");
+            writer.write("\trankdir=LR;\n");  // Representation left to right
+
+            for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
+                String className = classEntry.getKey();
+    
+                for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
+                    String methodName = methodEntry.getKey();
+                    List<Map<String, String>> calledMethods = methodEntry.getValue();
+    
+                    for (Map<String, String> calledMethod : calledMethods) {
+                        String receiverType = calledMethod.get("receiverType");
+                        String method = calledMethod.get("methodName");
+                        if(!Objects.equals(receiverType, UNKNOWN)) {
+                            writer.write(String.format("\t \"%s::%s\" -> \"%s\" [label=\"%s\"];%n", className, methodName, receiverType, method ));
+                        }
+                    }
+                }
+            }
+
+            writer.write("}\n");
+            System.out.println("\nFichier .dot créé avec succès : " + dotFilename);
         } catch (IOException e) {
             System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
         }
+
+        // Create the .png file from the .dot file
+        try {
+            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFilename, "-o", pngFilename);
+            Process p = pb.start();
+            p.waitFor();
+            System.out.println("Fichier .png créé avec succès : " + pngFilename);
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Erreur lors de la création du fichier .png : " + e.getMessage());
+        }
     }
-    private String resolveType(Expression expr, MethodDeclaration method, String className ,TypeDeclaration currentClass) {
-    	if(expr == null) return "Unknown";
-    	if(expr.toString().equals("System.out")) {
-    		return "Unknown";
-    	}
-    	// Si c'est "this", retourne le nom de la classe courante
+
+    private String resolveType(Expression expr, MethodDeclaration method, String className, TypeDeclaration currentClass) {
+        if(expr == null) return UNKNOWN;
+        if(expr.toString().equals("System.out")) {
+            return UNKNOWN;
+        }
+        // Si c'est "this", retourne le nom de la classe courante
         if (expr.toString().equals("this")) {
             return className;
         }
@@ -129,18 +145,18 @@ public class VisitorMethodsOfClasses extends Visitor {
 
         // Si l'expression est une variable, vérifie si elle est déclarée localement dans la méthode
         String variableType = getVariableTypeInMethod(expr.toString(), method);
-        if (!variableType.equals("Unknown")) {
+        if (!variableType.equals(UNKNOWN)) {
             return variableType;
         }
 
         // Sinon, vérifie si c'est un attribut de la classe
         String attributeType = getClassOfAttributes(expr.toString(), currentClass);
-        if (!attributeType.equals("Unknown")) {
+        if (!attributeType.equals(UNKNOWN)) {
             return attributeType;
         }
 
         // Par défaut, retourne "Unknown"
-        return "Unknown";
+        return UNKNOWN;
     }
 
     // Recherche une variable dans les déclarations locales de la méthode
@@ -157,7 +173,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                 }
             }
         }
-        return "Unknown";
+        return UNKNOWN;
     }
 
     // Recherche le type d'un attribut dans la classe
@@ -171,8 +187,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                 }
             }
         }
-        return "Unknown";
+        return UNKNOWN;
     }
-
 
 }

@@ -15,17 +15,18 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class VisitorCalculeStatistique extends Visitor {
 	private int nbClasses = 0;
 	private int nbMethods = 0;
-	private ArrayList<String> packages = new ArrayList<>();
+	private final ArrayList<String> packages = new ArrayList<>();
 	private int sumMethodsLines = 0;
 	private int nbAttributes = 0;
-	private HashMap<String,Integer> methodsByClass = new HashMap<>();
-	private HashMap<String,Integer> attributesByClass = new HashMap<>();
-    private HashMap<String, List<String>> classesTop10PercentMethods = new HashMap<>();
+	private final HashMap<String,Integer> methodsByClass = new HashMap<>();
+	private final HashMap<String,Integer> attributesByClass = new HashMap<>();
+    private final HashMap<String, List<String>> classesTop10PercentMethods = new HashMap<>();
     private int maxParams = 0;
 	private String methodsMaxParams = "";
 
 	@Override
 	public boolean visit(TypeDeclaration node) { 
+
 		int startLine = this.getCu().getLineNumber(node.getStartPosition());
         int endLine = this.getCu().getLineNumber(node.getStartPosition() + node.getLength());
         int loc = endLine - startLine + 1;
@@ -38,7 +39,6 @@ public class VisitorCalculeStatistique extends Visitor {
         	methods.put(m.getName().toString(), m.getBody().getLength());
         }
         this.classesTop10PercentMethods.put(node.getName().toString(), this.getTop10PercentClasses(methods, 0.1));
-        
 
 		return true;
 	}

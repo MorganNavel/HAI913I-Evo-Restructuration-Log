@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -16,7 +14,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import visitors.Visitor;
 
 public class ClassAnalyzer {
-    private ASTParser parser;
+    private final ASTParser parser;
     private String srcDir = ".";
     private Visitor v;
     private int codeLen = 0;
@@ -28,9 +26,9 @@ public class ClassAnalyzer {
 //        Map<String, String> options = JavaCore.getOptions();
 //        JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
 //        parser.setCompilerOptions(options);
-//        parser.setResolveBindings(true);
-//        parser.setBindingsRecovery(true);
-//        parser.setStatementsRecovery(true);
+        parser.setResolveBindings(true);
+        parser.setBindingsRecovery(true);
+        parser.setStatementsRecovery(true);
 //        String[] classPaths = new String[] {
 //                "/home/morgan/Documents/M2/HAI913I-Evo-Restructuration-Log/TP1-AST/target/classes/",
 //            };
@@ -39,10 +37,7 @@ public class ClassAnalyzer {
 //                "/home/morgan/Documents/M2/HAI913I-Evo-Restructuration-Log/TP1-AST/src/main/java/"
 //            };
 //            parser.setEnvironment(classPaths, sourceDirectories, null, true);
-
 	}
-	
-
 
     public void run() throws IOException {
         if (!this.srcDir.isEmpty()) {
@@ -52,21 +47,19 @@ public class ClassAnalyzer {
                 this.analyze(source);
             }
         }
-        v.displayResult();
+        //v.displayResult();
     }
 
     private void analyze(String source) {
-
         parser.setSource(source.toCharArray());
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         if (cu.getAST() != null && cu.getAST().hasBindingsRecovery()) {
             System.out.println("Bindings recovered successfully.");
         } else {
-            System.out.println("Binding recovery failed or not enabled.");
+            // System.out.println("Binding recovery failed or not enabled.");
         }
         v.setCu(cu);
         cu.accept(v);
-        
     }
 
 	private Set<String> listFilesFromDir(String dir) throws IOException {
