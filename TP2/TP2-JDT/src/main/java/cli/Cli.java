@@ -6,6 +6,8 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import analyzer.ClassAnalyzer;
+import visitors.ClusteringAlgorithm;
+import visitors.Visitor;
 import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
 
@@ -107,7 +109,7 @@ public class Cli {
         });
     }
 
-    public static void handleEx2Choice(Scanner scanner, VisitorMethodsOfClasses callGraphVisitor) {
+    public static void handleEx2Choice(Scanner scanner, Visitor v) {
         boolean stayInEx2 = true;
         while (stayInEx2) {
             int choice = Utils.getUserChoice(scanner);
@@ -117,14 +119,17 @@ public class Cli {
             }
             switch (choice) {
                 case 1:
-                    callGraphVisitor.displayResult();
+                    v.displayResult();
                     break;
                 case 2:
-                    callGraphVisitor.createCallGraphFile();
+                	if(v instanceof VisitorMethodsOfClasses) ((VisitorMethodsOfClasses) v).createCallGraphFile();
                     break;
                 case 3:
-                	callGraphVisitor.createCouplingGraph();
+                	if(v instanceof VisitorMethodsOfClasses) ((VisitorMethodsOfClasses) v).createCouplingGraph();
                 	break;
+                case 4:
+                	if(v instanceof ClusteringAlgorithm) ((ClusteringAlgorithm) v).performClustering(1,0.01);
+
                 case 0:
                     stayInEx2 = false;
                     System.out.println("Retour au menu principal.");

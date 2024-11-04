@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import analyzer.ClassAnalyzer;
+import visitors.ClusteringAlgorithm;
 import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
 
@@ -21,13 +22,14 @@ public class UserInterface extends Cli {
             ClassAnalyzer analyzer = new ClassAnalyzer(appDirectory);
             VisitorCalculeStatistique visitor = new VisitorCalculeStatistique();
             VisitorMethodsOfClasses callGraphVisitor = new VisitorMethodsOfClasses();
+            ClusteringAlgorithm couplingVisitor = new ClusteringAlgorithm();
 
             boolean running = true;
             while (running) {
                 Utils.printMenu();
                 String input = scanner.nextLine();
                 try {
-                    running = handleUserChoice(input, scanner, analyzer, visitor, callGraphVisitor);
+                    running = handleUserChoice(input, scanner, analyzer, visitor, callGraphVisitor, couplingVisitor);
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
@@ -49,7 +51,7 @@ public class UserInterface extends Cli {
         }
     }
 
-    public static boolean handleUserChoice(String input, Scanner scanner, ClassAnalyzer analyzer, VisitorCalculeStatistique visitor, VisitorMethodsOfClasses callGraphVisitor) throws IOException {
+    public static boolean handleUserChoice(String input, Scanner scanner, ClassAnalyzer analyzer, VisitorCalculeStatistique visitor, VisitorMethodsOfClasses callGraphVisitor, ClusteringAlgorithm c) throws IOException {
         if (Utils.isNumeric(input)) {
             int choice = Integer.parseInt(input);
             switch (choice) {
@@ -63,6 +65,13 @@ public class UserInterface extends Cli {
                     analyzer.run();
                     handleEx2Choice(scanner, callGraphVisitor);
                     break;
+                case 3: 
+                	Utils.printMenuEx3();
+                    analyzer.accept(c);
+                    analyzer.run();
+                    handleEx2Choice(scanner, c);
+                    break;
+                	
                 case 0:
                     System.out.println("Au revoir!");
                     return false;

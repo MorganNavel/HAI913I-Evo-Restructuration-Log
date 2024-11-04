@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.Map.Entry;
 
 public class VisitorMethodsOfClasses extends Visitor {
-    private static final String UNKNOWN = "Unknown";
-    private final Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
-    private ArrayList<String> classes = new ArrayList<>();
-    private HashMap<String,Double> couplings = new HashMap<>();
+    protected static final String UNKNOWN = "Unknown";
+    protected final Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
+    protected ArrayList<String> classes = new ArrayList<>();
+    protected HashMap<String,Double> couplings = new HashMap<>();
     
 
     @Override
@@ -82,7 +82,6 @@ public class VisitorMethodsOfClasses extends Visitor {
                 System.out.println("\tAucune méthode n'appelle d'autres méthodes dans cette classe.\n");
             }
         }
-        displayCoupling();
     }
 
     // Method to create the .dot and .png files of the call graph
@@ -307,9 +306,20 @@ public class VisitorMethodsOfClasses extends Visitor {
         }
         System.out.println("processApplicationCoupling: "+this.couplings);
     }
-    private void displayCoupling() {
-    	System.out.println(couplings);
+    public double calculateClusterCoupling(String className, List<String> cluster) {
+        double totalCoupling = 0.0;
+        for (String clusterClass : cluster) {
+            totalCoupling += calculateCoupling(className, clusterClass);
+        }
+        return totalCoupling / cluster.size();
     }
-
-
+    public List<List<String>> initializeClusters() {
+        List<List<String>> clusters = new ArrayList<>();
+        for (String className : classes) {
+            List<String> cluster = new ArrayList<>();
+            cluster.add(className);
+            clusters.add(cluster);
+        }
+        return clusters;
+    }
 }

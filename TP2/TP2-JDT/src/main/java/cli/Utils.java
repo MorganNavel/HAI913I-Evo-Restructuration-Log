@@ -29,6 +29,8 @@ public class Utils {
         System.out.println("\n--- Menu Principal ---");
         System.out.println("1: Exercice 1 - Analyse Code Source");
         System.out.println("2: Exercice 2 - Graphe D'appel");
+        System.out.println("3: Exercice 3 - Couplage & Clustering");
+
         System.out.println("0: Quitter\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }
@@ -59,6 +61,18 @@ public class Utils {
         System.out.println("1: Afficher le graphe d'appels de méthodes.");
         System.out.println("2: Créer le fichier .dot et png du graphe d'appels.");
         System.out.println("3: Créer le fichier .dot et png du graphe de couplage entre classe.");
+        System.out.println("4: Clusterisation hiérarchique des classes.");
+
+        System.out.println("0: Retour au menu principal.\n");
+        System.out.print(CHOOSE_OPTION_PROMPT);
+    }
+    public static void printMenuEx3() {
+        System.out.println("\n--- Exercice 3 : Couplage & Clusterisation ---");
+        System.out.println("1: Afficher le graphe d'appels de méthodes.");
+        System.out.println("2: Créer le fichier .dot et png du graphe d'appels.");
+        System.out.println("3: Créer le fichier .dot et png du graphe de couplage entre classe.");
+        System.out.println("4: Clusterisation hiérarchique des classes.");
+
         System.out.println("0: Retour au menu principal.\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }
