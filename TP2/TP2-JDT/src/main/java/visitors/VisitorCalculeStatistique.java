@@ -26,7 +26,6 @@ public class VisitorCalculeStatistique extends Visitor {
 
 	@Override
 	public boolean visit(TypeDeclaration node) { 
-
 		int startLine = this.getCu().getLineNumber(node.getStartPosition());
         int endLine = this.getCu().getLineNumber(node.getStartPosition() + node.getLength());
         int loc = endLine - startLine + 1;
@@ -90,7 +89,6 @@ public class VisitorCalculeStatistique extends Visitor {
 	}
 
 	public List<String> getTop10PercentClasses(HashMap<String, Integer> nbByClasses, double percentile) {
-
         ArrayList<Integer> methodCounts = new ArrayList<>(nbByClasses.values());
 
 		if (methodCounts.isEmpty()){

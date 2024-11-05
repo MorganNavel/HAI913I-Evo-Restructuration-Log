@@ -23,22 +23,12 @@ public class ClassAnalyzer {
         this.srcDir = srcDir;
         this.parser = ASTParser.newParser(AST.JLS4);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-//        Map<String, String> options = JavaCore.getOptions();
-//        JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
-//        parser.setCompilerOptions(options);
         parser.setResolveBindings(true);
         parser.setBindingsRecovery(true);
         parser.setStatementsRecovery(true);
-//        String[] classPaths = new String[] {
-//                "/home/morgan/Documents/M2/HAI913I-Evo-Restructuration-Log/TP1-AST/target/classes/",
-//            };
-//
-//            String[] sourceDirectories = new String[] {
-//                "/home/morgan/Documents/M2/HAI913I-Evo-Restructuration-Log/TP1-AST/src/main/java/"
-//            };
-//            parser.setEnvironment(classPaths, sourceDirectories, null, true);
 	}
 
+    // Method to run the analyzer
     public void run() throws IOException {
         if (!this.srcDir.isEmpty()) {
             Set<String> paths = this.listFilesFromDir(srcDir);
@@ -50,6 +40,7 @@ public class ClassAnalyzer {
         //v.displayResult();
     }
 
+    // Method to analyze the source code
     private void analyze(String source) {
         parser.setSource(source.toCharArray());
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
@@ -62,6 +53,7 @@ public class ClassAnalyzer {
         cu.accept(v);
     }
 
+    // Method to list all files in a directory
 	private Set<String> listFilesFromDir(String dir) throws IOException {
 	    File rootDir = new File(dir);
 
@@ -72,7 +64,6 @@ public class ClassAnalyzer {
 
 	    if (files != null) {
 	        for (File file : files) {
-
 	            if (file.isDirectory()) {
 	                recursiveFoundFiles.addAll(listFilesFromDir(file.getPath()));
 	            }
@@ -86,13 +77,17 @@ public class ClassAnalyzer {
 	    return foundFiles;
 	}
 
+    // Method to accept a visitor
 	public void accept(Visitor v) {
 		this.v = v;
 	}
-	
+
+    // Method to get the number of lines of code
 	public int getCodeLen() {
 		return this.codeLen;
 	}
+
+    // Method to read the content of a file
     private String readFile(String path) throws IOException {
         StringBuilder contenu = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
