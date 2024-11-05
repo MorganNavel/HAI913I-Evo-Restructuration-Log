@@ -163,7 +163,7 @@ public class Cli {
             }
             switch (choice) {
                 case 1:
-                    clusteringAlgorithm.performClustering(1, 0.01);
+                    clusteringAlgorithm.performClustering(20, 0.00015);
                     break;
                 case 2:
 

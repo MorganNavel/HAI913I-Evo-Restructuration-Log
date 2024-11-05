@@ -40,8 +40,7 @@ public class ClusteringAlgorithm extends CouplingCalculator {
         List<List<String>> filteredClusters = filterClustersByCoupling(clusters);
         
         System.out.println("Clusters finaux après filtrage:");
-        System.out.println(filteredClusters);
-        //displayClusters(filteredClusters);
+        displayClusters(filteredClusters);
 
         return filteredClusters;
     }
