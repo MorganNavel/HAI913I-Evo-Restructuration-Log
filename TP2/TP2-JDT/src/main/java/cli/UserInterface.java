@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import analyzer.ClassAnalyzer;
+import visitors.CouplingCalculator;
 import visitors.ClusteringAlgorithm;
 import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
 
 public class UserInterface extends Cli {
+    public static String directoryPath = "";
 
+    // Main method to run the application
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             String appDirectory = chooseAppDirectory(scanner);
@@ -22,14 +25,15 @@ public class UserInterface extends Cli {
             ClassAnalyzer analyzer = new ClassAnalyzer(appDirectory);
             VisitorCalculeStatistique visitor = new VisitorCalculeStatistique();
             VisitorMethodsOfClasses callGraphVisitor = new VisitorMethodsOfClasses();
-            ClusteringAlgorithm couplingVisitor = new ClusteringAlgorithm();
+            CouplingCalculator couplingCalculator = new CouplingCalculator();
+            ClusteringAlgorithm clusteringAlgorithm = new ClusteringAlgorithm();
 
             boolean running = true;
             while (running) {
                 Utils.printMenu();
                 String input = scanner.nextLine();
                 try {
-                    running = handleUserChoice(input, scanner, analyzer, visitor, callGraphVisitor, couplingVisitor);
+                    running = handleUserChoice(input, scanner, analyzer, visitor, callGraphVisitor, couplingCalculator, clusteringAlgorithm);
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
@@ -37,9 +41,10 @@ public class UserInterface extends Cli {
         }
     }
 
+    // Method to choose the application directory
     private static String chooseAppDirectory(Scanner scanner) {
         System.out.print("Entrez le chemin du répertoire de l'application à analyser: ");
-        String directoryPath = scanner.nextLine();
+        directoryPath = scanner.nextLine();
         File directory = new File(directoryPath);
 
         if (directory.exists() && directory.isDirectory()) {
@@ -51,7 +56,10 @@ public class UserInterface extends Cli {
         }
     }
 
-    public static boolean handleUserChoice(String input, Scanner scanner, ClassAnalyzer analyzer, VisitorCalculeStatistique visitor, VisitorMethodsOfClasses callGraphVisitor, ClusteringAlgorithm c) throws IOException {
+    // Method to handle the user choice
+    public static boolean handleUserChoice(String input, Scanner scanner, ClassAnalyzer analyzer,
+                                           VisitorCalculeStatistique visitor, VisitorMethodsOfClasses callGraphVisitor,
+                                           CouplingCalculator couplingCalculator, ClusteringAlgorithm clusterAlgorithm) throws IOException {
         if (Utils.isNumeric(input)) {
             int choice = Integer.parseInt(input);
             switch (choice) {
@@ -63,15 +71,16 @@ public class UserInterface extends Cli {
                     Utils.printMenuEx2();
                     analyzer.accept(callGraphVisitor);
                     analyzer.run();
-                    handleEx2Choice(scanner, callGraphVisitor);
-                    break;
-                case 3: 
-                	Utils.printMenuEx3();
-                    analyzer.accept(c);
+                    analyzer.accept(couplingCalculator);
                     analyzer.run();
-                    handleEx2Choice(scanner, c);
+                    handleEx2Choice(scanner, callGraphVisitor, couplingCalculator);
                     break;
-                	
+                case 3:
+                	Utils.printMenuEx3();
+                    analyzer.accept(clusterAlgorithm);
+                    analyzer.run();
+                    handleEx3Choice(scanner, clusterAlgorithm);
+                    break;
                 case 0:
                     System.out.println("Au revoir!");
                     return false;

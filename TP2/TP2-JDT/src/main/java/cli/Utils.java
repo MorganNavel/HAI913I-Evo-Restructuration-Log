@@ -1,5 +1,6 @@
 package cli;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Utils {
@@ -28,9 +29,8 @@ public class Utils {
     public static void printMenu() {
         System.out.println("\n--- Menu Principal ---");
         System.out.println("1: Exercice 1 - Analyse Code Source");
-        System.out.println("2: Exercice 2 - Graphe D'appel");
-        System.out.println("3: Exercice 3 - Couplage & Clustering");
-
+        System.out.println("2: Exercice 2 - Graphe D'appel et Couplage");
+        System.out.println("3: Exercice 3 - Clustering et Identification de Modules");
         System.out.println("0: Quitter\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }
@@ -57,23 +57,34 @@ public class Utils {
 
     // Method to print the menu for the second exercise
     public static void printMenuEx2() {
-        System.out.println("\n--- Exercice 2 : Graphe D'appel ---");
+        System.out.println("\n--- Exercice 2 : Graphe D'appel et Couplage ---");
+        System.out.println("Graphe d'appels:");
         System.out.println("1: Afficher le graphe d'appels de méthodes.");
         System.out.println("2: Créer le fichier .dot et png du graphe d'appels.");
-        System.out.println("3: Créer le fichier .dot et png du graphe de couplage entre classe.");
-        System.out.println("4: Clusterisation hiérarchique des classes.");
+        System.out.println("\nCouplage:");
+        System.out.println("3: Afficher le couplage entre classes.");
+        System.out.println("4: Créer le fichier .dot et png du graphe de couplage entre classe.");
+        System.out.println("0: Retour au menu principal.\n");
+        System.out.print(CHOOSE_OPTION_PROMPT);
+    }
+
+    // Method to print the menu for the third exercise
+    public static void printMenuEx3() {
+        System.out.println("\n--- Exercice 3 : Clustering & Identification de Modules ---");
+        System.out.println("1: Clusterisation hiérarchique des classes.");
 
         System.out.println("0: Retour au menu principal.\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }
-    public static void printMenuEx3() {
-        System.out.println("\n--- Exercice 3 : Couplage & Clusterisation ---");
-        System.out.println("1: Afficher le graphe d'appels de méthodes.");
-        System.out.println("2: Créer le fichier .dot et png du graphe d'appels.");
-        System.out.println("3: Créer le fichier .dot et png du graphe de couplage entre classe.");
-        System.out.println("4: Clusterisation hiérarchique des classes.");
 
-        System.out.println("0: Retour au menu principal.\n");
-        System.out.print(CHOOSE_OPTION_PROMPT);
+    public static void generatePngFromDotFile(String dotFilename, String pngFilename) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFilename, "-o", pngFilename);
+            Process p = pb.start();
+            p.waitFor();
+            System.out.println("Fichier .png créé avec succès : " + pngFilename);
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Erreur lors de la création du fichier .png : " + e.getMessage());
+        }
     }
 }

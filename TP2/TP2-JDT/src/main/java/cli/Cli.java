@@ -1,13 +1,16 @@
 package cli;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import analyzer.ClassAnalyzer;
+import visitors.CouplingCalculator;
 import visitors.ClusteringAlgorithm;
-import visitors.Visitor;
 import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
 
@@ -15,6 +18,7 @@ public class Cli {
     public static final String INVALID_NUMBER_ERROR = "Erreur : Veuillez entrer un nombre valide.";
     public static final String DIRECTORY_ERROR = "Erreur : Le répertoire n'existe pas ou n'est pas valide.";
 
+    // Method to handle the user choice for the first exercise
     public static void handleEx1Choice(ClassAnalyzer analyzer, Scanner scanner, VisitorCalculeStatistique visitor) throws IOException {
         boolean stayInEx1 = true;
         while (stayInEx1) {
@@ -60,7 +64,7 @@ public class Cli {
                     printClassesWithMethodCountGreaterThanX(scanner, visitor);
                     break;
                 case 12:
-                    System.out.println("\nLes 10% des méthodes avec le plus grand nombre de lignes de code (par classe): " 
+                    System.out.println("\nLes 10% des méthodes avec le plus grand nombre de lignes de code (par classe): "
                     + visitor.getClassesTop10PercentMethods());
                     break;
                 case 13:
@@ -82,10 +86,12 @@ public class Cli {
         }
     }
 
+    // Method to print the top 10% classes with the most methods or attributes
     private static void printTop10Percent(List<String> top10PercentClasses, String criteria) {
         System.out.println("\nLes 10% des classes avec le plus grand nombre de " + criteria + ": " + top10PercentClasses);
     }
 
+    // Method to print the classes that are in the top 10% for both methods and attributes
     private static void printTop10PercentCommonClasses(VisitorCalculeStatistique visitor) {
         List<String> methodsClasses = visitor.getTop10PercentClasses(visitor.getMethodsByClass(), 0.1);
         List<String> attributesClasses = visitor.getTop10PercentClasses(visitor.getAttributesByClass(), 0.1);
@@ -95,6 +101,7 @@ public class Cli {
         System.out.println("\nClasses présentes dans les deux catégories (méthodes et attributs): " + commonClasses);
     }
 
+    // Method to print the classes that have more than X methods
     private static void printClassesWithMethodCountGreaterThanX(Scanner scanner, VisitorCalculeStatistique visitor) {
         System.out.print("\nEntrez la valeur de X: \n");
         int x = Utils.getUserChoice(scanner);
@@ -109,7 +116,8 @@ public class Cli {
         });
     }
 
-    public static void handleEx2Choice(Scanner scanner, Visitor v) {
+    // Method to handle the user choice for the second exercise
+    public static void handleEx2Choice(Scanner scanner, VisitorMethodsOfClasses visitor, CouplingCalculator cc){
         boolean stayInEx2 = true;
         while (stayInEx2) {
             int choice = Utils.getUserChoice(scanner);
@@ -119,17 +127,17 @@ public class Cli {
             }
             switch (choice) {
                 case 1:
-                    v.displayResult();
+                    visitor.displayResult();
                     break;
                 case 2:
-                	if(v instanceof VisitorMethodsOfClasses) ((VisitorMethodsOfClasses) v).createCallGraphFile();
+                    visitor.createCallGraphFile();
                     break;
                 case 3:
-                	if(v instanceof VisitorMethodsOfClasses) ((VisitorMethodsOfClasses) v).createCouplingGraph();
-                	break;
+                    cc.displayCoupling();
+                    break;
                 case 4:
-                	if(v instanceof ClusteringAlgorithm) ((ClusteringAlgorithm) v).performClustering(1,0.01);
-
+                    cc.createCouplingGraph();
+                	break;
                 case 0:
                     stayInEx2 = false;
                     System.out.println("Retour au menu principal.");
@@ -143,5 +151,35 @@ public class Cli {
             }
         }
     }
-    
+
+    // Method to handle the user choice for the third exercise
+    public static void handleEx3Choice(Scanner scanner, ClusteringAlgorithm clusteringAlgorithm) {
+        boolean stayInEx3 = true;
+        while (stayInEx3) {
+            int choice = Utils.getUserChoice(scanner);
+            if (choice == -1) {
+                System.out.println(INVALID_NUMBER_ERROR);
+                return;
+            }
+            switch (choice) {
+                case 1:
+                    clusteringAlgorithm.performClustering(1, 0.01);
+                    break;
+                case 2:
+
+                    break;
+                case 0:
+                    stayInEx3 = false;
+                    System.out.println("Retour au menu principal.");
+                    break;
+                default:
+                    System.out.println("Choix invalide.");
+            }
+            if (stayInEx3) {
+                System.out.print("\n");
+                Utils.printMenuEx3();
+            }
+        }
+    }
+
 }

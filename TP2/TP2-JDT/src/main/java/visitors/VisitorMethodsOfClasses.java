@@ -9,18 +9,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map.Entry;
 
+import static cli.Utils.generatePngFromDotFile;
+
 public class VisitorMethodsOfClasses extends Visitor {
     protected static final String UNKNOWN = "Unknown";
     protected final Map<String, Map<String, List<Map<String, String>>>> callGraph = new HashMap<>();
-    protected ArrayList<String> classes = new ArrayList<>();
-    protected HashMap<String,Double> couplings = new HashMap<>();
-    
+    protected final ArrayList<String> classes = new ArrayList<>();
 
     @Override
     public boolean visit(TypeDeclaration node) {
         String className = node.getName().getFullyQualifiedName();
         if(!classes.contains(className)) classes.add(className);
-
         MethodDeclaration[] methods = node.getMethods();
 
         for (MethodDeclaration method : methods) {
@@ -47,8 +46,7 @@ public class VisitorMethodsOfClasses extends Visitor {
                 Map<String, String> methodCallInfo = new HashMap<>();
                 methodCallInfo.put("methodName", calledMethodName);
                 methodCallInfo.put("receiverType", receiverType);
-                if(!classes.contains(receiverType) && receiverType != UNKNOWN) classes.add(receiverType);
-
+                if(!classes.contains(receiverType) && !receiverType.equals(UNKNOWN)) classes.add(receiverType);
 
                 List<Map<String, String>> methodsPreviouslyCalled = callGraph.get(className).get(node.getName().getFullyQualifiedName());
                 methodsPreviouslyCalled.add(methodCallInfo);
@@ -61,8 +59,8 @@ public class VisitorMethodsOfClasses extends Visitor {
 
     @Override
     public void displayResult() {
-    	System.out.println(classes);
-        System.out.println("Graphe d'appels de méthodes :");
+        System.out.println("\nClasses analysées : " + classes);
+        System.out.println("\nGraphe d'appels de méthodes :");
         for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
             String className = classEntry.getKey();
             boolean hasMethodCalls = false;
@@ -89,7 +87,6 @@ public class VisitorMethodsOfClasses extends Visitor {
         String directoryName = "callGraph";
         String dotFilename = directoryName + "/callGraph.dot";
         String pngFilename = directoryName + "/callGraph.png";
-
         
         // Create the directory if it doesn't exist
         File directory = new File(directoryName);
@@ -126,103 +123,51 @@ public class VisitorMethodsOfClasses extends Visitor {
         }
 
         // Create the .png file from the .dot file
-        try {
-            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFilename, "-o", pngFilename);
-            Process p = pb.start();
-            p.waitFor();
-            System.out.println("Fichier .png créé avec succès : " + pngFilename);
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Erreur lors de la création du fichier .png : " + e.getMessage());
-        }
-    }
-    public void createCouplingGraph() {
-    	String directoryName = "couplingGraph";
-        String dotFilename = directoryName + "/couplingGraph.dot";
-        String pngFilename = directoryName + "/couplingGraph.png";
-        this.processApplicationCoupling();
-
-        
-        // Create the directory if it doesn't exist
-        File directory = new File(directoryName);
-        if(!directory.exists()) {
-            directory.mkdir();
-        }
-
-        // Create the .dot file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilename))) {
-            writer.write("digraph CouplingGraph {\n");
-            writer.write("\trankdir=LR;\n");  // Representation left to right
-            this.couplings.forEach((classes, couplage) -> {
-            	System.out.println(classes);
-            	String [] splittedClasses =  classes.split("-");
-				try {
-					writer.write(String.format("\t \"%s\" -> \"%s\" [label=\"%s\"];%n", splittedClasses[0], splittedClasses[1], couplage ));
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-            	
-            });
-            System.out.println(this.couplings);
-            writer.write("}\n");
-            System.out.println("\nFichier .dot créé avec succès : " + dotFilename);
-        } catch (IOException e) {
-            System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
-        }
-
-        // Create the .png file from the .dot file
-        try {
-            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFilename, "-o", pngFilename);
-            Process p = pb.start();
-            p.waitFor();
-            System.out.println("Fichier .png créé avec succès : " + pngFilename);
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Erreur lors de la création du fichier .png : " + e.getMessage());
-        }
-
+        generatePngFromDotFile(dotFilename, pngFilename);
     }
 
+    // Method to resolve the type of expression within a method, returning the class name or "Unknown" if it cannot be determined
     private String resolveType(Expression expr, MethodDeclaration method, String className, TypeDeclaration currentClass) {
-        if(expr == null) return UNKNOWN;
-        if(expr.toString().equals("System.out")) {
+        if(expr == null || expr.toString().equals("System.out")) {
             return UNKNOWN;
         }
-        // Si c'est "this", retourne le nom de la classe courante
+
+        // if it's "this", return the name of the current class
         if (expr.toString().equals("this")) {
             return className;
         }
 
-        // Vérifie si c'est un appel à une méthode statique (en supposant que la première lettre est une majuscule)
+        // Checks if it's a call to a static method (assuming the first letter is uppercase)
         if (Character.isUpperCase(expr.toString().charAt(0))) {
             return expr.toString();  // Le nom de la classe
         }
 
-        // Si l'expression est une variable, vérifie si elle est déclarée localement dans la méthode
+        // If the expression is a variable, check whether it is declared locally in the method
         String variableType = getVariableTypeInMethod(expr.toString(), method);
         if (!variableType.equals(UNKNOWN)) {
             return variableType;
         }
 
-        // Sinon, vérifie si c'est un attribut de la classe
+        // Else check if it's an attribute of the class
         String attributeType = getClassOfAttributes(expr.toString(), currentClass);
         if (!attributeType.equals(UNKNOWN)) {
             return attributeType;
         }
 
-        // Par défaut, retourne "Unknown"
+        // By default, return "Unknown"
         return UNKNOWN;
     }
 
-    // Recherche une variable dans les déclarations locales de la méthode
+    // Method to search for a variable in the local declarations of the method
     private String getVariableTypeInMethod(String variableName, MethodDeclaration method) {
-        // Parcourt les déclarations de variables dans la méthode pour trouver une correspondance
+        // Scans variable declarations in the method to find a match
         for (Object statement : method.getBody().statements()) {
             if (statement instanceof VariableDeclarationStatement) {
                 VariableDeclarationStatement varDecl = (VariableDeclarationStatement) statement;
                 for (Object fragment : varDecl.fragments()) {
                     VariableDeclarationFragment varFragment = (VariableDeclarationFragment) fragment;
                     if (varFragment.getName().getFullyQualifiedName().equals(variableName)) {
-                        return varDecl.getType().toString();  // Retourne le type de la variable locale
+                        return varDecl.getType().toString();  // Returns the type of the local variable
                     }
                 }
             }
@@ -230,96 +175,18 @@ public class VisitorMethodsOfClasses extends Visitor {
         return UNKNOWN;
     }
 
-    // Recherche le type d'un attribut dans la classe
+    // Method to find the type of attribute in the class
     private String getClassOfAttributes(String attributeName, TypeDeclaration currentClass) {
+        // Scans class fields (attributes) to find a match
         for (FieldDeclaration field : currentClass.getFields()) {
             for (Object fragment : field.fragments()) {
                 VariableDeclarationFragment varFragment = (VariableDeclarationFragment) fragment;
                 if (varFragment.getName().getFullyQualifiedName().equals(attributeName)) {
-                    return field.getType().toString();
+                    return field.getType().toString();  // Returns the type of the class attribute
                 }
             }
         }
         return UNKNOWN;
     }
 
- // Nombre de relations (appels) entre les méthodes de deux classes A et B
-    private int countCallsBetweenClasses(String classA, String classB) {
-        int count = 0;
-        for (Entry<String, Map<String, List<Map<String, String>>>> classEntry : callGraph.entrySet()) {
-            String className = classEntry.getKey();
-            if (className.equals(classA) || className.equals(classB)) {
-                for (Entry<String, List<Map<String, String>>> methodEntry : classEntry.getValue().entrySet()) {
-                    List<Map<String, String>> calledMethods = methodEntry.getValue();
-                    for (Map<String, String> calledMethod : calledMethods) {
-                        String receiverType = calledMethod.get("receiverType");
-                        if (receiverType.equals(UNKNOWN)) continue;
-                        if ((className.equals(classA) && classB.equals(receiverType)) || (className.equals(classB) && classA.equals(receiverType))) {
-                            count++;
-                        }
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    // Nombre total de relations (appels) entre les méthodes de toutes les classes
-    private int countTotalBinaryCalls() {
-        int count = 0;
-        for (Map<String, List<Map<String, String>>> methodsInClass : callGraph.values()) {
-            for (List<Map<String, String>> calledMethods : methodsInClass.values()) {
-                for (Map<String, String> calledMethod : calledMethods) {
-                    String receiverType = calledMethod.get("receiverType");
-                    if (!receiverType.equals(UNKNOWN)) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-
-    // Calcul du couplage entre deux classes
-    public double calculateCoupling(String classA, String classB) {
-        int callsBetweenAandB = countCallsBetweenClasses(classA, classB);
-        int totalBinaryCalls = countTotalBinaryCalls();
-
-        if (totalBinaryCalls == 0) {
-            return 0.0;
-        }
-
-        return (double) callsBetweenAandB / totalBinaryCalls;
-    }
-
-    public void processApplicationCoupling() {
-        for (String classA : classes) {
-            for (String classB : classes) {
-                if (!classA.equals(classB)) {
-                    double coupling = calculateCoupling(classA, classB);
-                    if(!couplings.containsKey(classA+"-"+classB) && !couplings.containsKey(classB+"-"+classA) && coupling>0) {
-                    	couplings.put(classA+"-"+classB, coupling);
-                    }
-                }
-            }
-        }
-        System.out.println("processApplicationCoupling: "+this.couplings);
-    }
-    public double calculateClusterCoupling(String className, List<String> cluster) {
-        double totalCoupling = 0.0;
-        for (String clusterClass : cluster) {
-            totalCoupling += calculateCoupling(className, clusterClass);
-        }
-        return totalCoupling / cluster.size();
-    }
-    public List<List<String>> initializeClusters() {
-        List<List<String>> clusters = new ArrayList<>();
-        for (String className : classes) {
-            List<String> cluster = new ArrayList<>();
-            cluster.add(className);
-            clusters.add(cluster);
-        }
-        return clusters;
-    }
 }
