@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public class VisitorStatistique extends CtScanner {
     public ArrayList<String> classes = new ArrayList<>();
+    public ArrayList<String> packages = new ArrayList<>();
     private int methodCount = 0;
-    private int packageCount = 0;
     private int totalLineCount = 0;
     private int totalAttributesCount = 0;
     private int maxParameters = 0;
@@ -56,8 +56,19 @@ public class VisitorStatistique extends CtScanner {
 
     @Override
     public void visitCtPackage(CtPackage ctPackage) {
-        packageCount++;
+        if (!packages.contains(ctPackage.getQualifiedName()) && !ctPackage.getQualifiedName().isEmpty()) {
+            packages.add(ctPackage.getQualifiedName());
+        }
         super.visitCtPackage(ctPackage);
+    }
+
+    // Getters for classes and packages
+    public List<String> getClasses() {
+        return classes;
+    }
+
+    public List<String> getPackages() {
+        return packages;
     }
 
     // Getters for statistics
@@ -70,7 +81,7 @@ public class VisitorStatistique extends CtScanner {
     }
 
     public int getPackageCount() {
-        return packageCount;
+        return packages.size();
     }
 
     public int getLineCount() {

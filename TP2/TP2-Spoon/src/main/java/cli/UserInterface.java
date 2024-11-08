@@ -5,29 +5,41 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import analyzer.SpoonParser;
+import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 
 public class UserInterface extends Cli {
-    public static String directoryPath = "";
+    public static String directoryPath = null;
 
     // Main method to run the application
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
-            String appDirectory = chooseAppDirectory(scanner);
-            if (appDirectory == null) {
-                System.out.println("Fermeture de l'application. Au revoir!");
-                return;
+            while (directoryPath == null) {
+                System.out.print("Veuillez entrer le chemin du répertoire de l'application à analyser ou 'exit' pour quitter: ");
+                String input = scanner.nextLine().trim();
+
+                if (input.equalsIgnoreCase("exit")) {
+                    System.out.println("Au revoir!");
+                    return;
+                }
+
+                directoryPath = chooseAppDirectory(input);
+
+                if (directoryPath == null) {
+                    System.out.println(DIRECTORY_ERROR);
+                }
             }
 
-            SpoonParser parser = new SpoonParser(appDirectory);
+            SpoonParser parser = new SpoonParser(directoryPath);
             VisitorStatistique visitor = new VisitorStatistique();
+            VisitorMethods visitorMethods = new VisitorMethods();
 
             boolean running = true;
             while (running) {
                 Utils.printMenu();
                 String input = scanner.nextLine();
                 try {
-                    running = handleUserChoice(input, scanner, parser, visitor);
+                    running = handleUserChoice(input, scanner, parser, visitor, visitorMethods);
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
@@ -36,22 +48,20 @@ public class UserInterface extends Cli {
     }
 
     // Method to choose the application directory
-    private static String chooseAppDirectory(Scanner scanner) {
-        System.out.print("Entrez le chemin du répertoire de l'application à analyser: ");
-        directoryPath = scanner.nextLine();
+    private static String chooseAppDirectory(String directoryPath) {
         File directory = new File(directoryPath);
 
         if (directory.exists() && directory.isDirectory()) {
-            System.out.println("Répertoire valide.");
+            System.out.println("Le répertoire '" + directoryPath + "' est valide.");
             return directoryPath;
         } else {
-            System.out.println(DIRECTORY_ERROR);
             return null;
         }
     }
 
     // Method to handle the user choice
-    public static boolean handleUserChoice(String input, Scanner scanner, SpoonParser parser, VisitorStatistique visitor) throws IOException {
+    public static boolean handleUserChoice(String input, Scanner scanner, SpoonParser parser, VisitorStatistique visitor,
+                                           VisitorMethods visitorMethods) throws IOException {
         if (Utils.isNumeric(input)) {
             int choice = Integer.parseInt(input);
             switch (choice) {
@@ -61,7 +71,7 @@ public class UserInterface extends Cli {
                     break;
                 case 2:
                     Utils.printMenuEx2();
-
+                    handleEx2Choice(parser, scanner, visitorMethods);
                     break;
                 case 3:
                 	Utils.printMenuEx3();
@@ -78,5 +88,4 @@ public class UserInterface extends Cli {
         }
         return true;
     }
-
 }

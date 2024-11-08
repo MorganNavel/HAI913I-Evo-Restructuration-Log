@@ -3,8 +3,12 @@ package analyzer;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.filter.TypeFilter;
+import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.List;
 public class SpoonParser {
     private final String srcDir;
     private final Launcher launcher;
-    private CtModel model;
+    private final CtModel model;
 
     public SpoonParser(String srcDir) {
         this.srcDir = srcDir;
@@ -45,4 +49,14 @@ public class SpoonParser {
         }
     }
 
+    public void accept(VisitorMethods visitor) {
+        if (model == null) {
+            System.out.println("Erreur : Modèle non initialisé.");
+            return;
+        }
+
+        for (CtMethod<?> method : model.getElements(new TypeFilter<>(CtMethod.class))) {
+            visitor.scan(method);
+        }
+    }
 }

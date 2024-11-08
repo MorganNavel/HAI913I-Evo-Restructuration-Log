@@ -1,6 +1,11 @@
 package cli;
 
 import analyzer.SpoonParser;
+import spoon.reflect.CtModel;
+import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.visitor.filter.TypeFilter;
+import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 
 import java.io.IOException;
@@ -25,7 +30,7 @@ public class Cli {
             switch (choice) {
                 case 1:
                     System.out.println("\nNombre de classes de l'application: " + visitor.getClassCount());
-                    System.out.println("Classes: " + visitor.classes);
+                    System.out.println("\nClasses: " + visitor.getClasses());
                     break;
                 case 2:
                     System.out.println("\nNombre de lignes de code de l'application: " + visitor.getLineCount());
@@ -35,6 +40,7 @@ public class Cli {
                     break;
                 case 4:
                     System.out.println("\nNombre total de packages de l'application: " + visitor.getPackageCount());
+                    System.out.println("\nPackages: " + visitor.getPackages());
                     break;
                 case 5:
                     System.out.println("\nNombre moyen de méthodes par classe: " + visitor.getAverageMethodsPerClass());
@@ -106,5 +112,65 @@ public class Cli {
         visitor.getClassesWithMoreThanXMethods(x).forEach((className, methodCount) -> {
             System.out.println("Classe: " + className + " - Nombre de méthodes: " + methodCount);
         });
+    }
+
+    // Method to handle the user choice for the second exercise
+    public static void handleEx2Choice(SpoonParser parser, Scanner scanner, VisitorMethods visitorMethods) throws IOException {
+        boolean stayInEx2 = true;
+        parser.accept(visitorMethods); // Launch the analysis with Spoon
+        while (stayInEx2) {
+            int choice = Utils.getUserChoice(scanner);
+            if (choice == -1) {
+                System.out.println(INVALID_NUMBER_ERROR);
+                return;
+            }
+            switch (choice) {
+                case 1:
+                    visitorMethods.displayCallGraph();
+                    break;
+                case 2:
+                    visitorMethods.createCallGraph();
+                    break;
+                case 3:
+                    calculateCouplingBetweenClasses(parser.getModel(), scanner, visitorMethods);
+                case 4:
+                    visitorMethods.displayCouplingGraph();
+                    break;
+                case 5:
+                    visitorMethods.createCouplingGraph();
+
+                    break;
+                case 0:
+                    stayInEx2 = false;
+                    System.out.println("Retour au menu principal.");
+                    break;
+                default:
+                    System.out.println("Choix invalide.");
+                    break;
+            }
+            if (stayInEx2) {
+                System.out.print("\n");
+                Utils.printMenuEx2();
+            }
+        }
+    }
+
+    private static void calculateCouplingBetweenClasses(CtModel model, Scanner scanner, VisitorMethods visitorMethods) {
+        System.out.println("\nCouplage entre deux classes: ");
+
+        System.out.print("Entrez le nom de la première classe: ");
+        String class1 = scanner.nextLine();
+        System.out.print("Entrez le nom de la deuxième classe: ");
+        String class2 = scanner.nextLine();
+
+        CtClass<?> classA = visitorMethods.findClassByName(model, class1);
+        CtClass<?> classB = visitorMethods.findClassByName(model, class2);
+
+        if (classA != null && classB != null) {
+            double coupling = visitorMethods.calculateCouplingBetweenClasses(model, classA, classB);
+            System.out.println("Couplage entre " + class1 + " et " + class2 + ": " + coupling);
+        } else {
+            System.out.println("Erreur : Une ou les deux classes n'ont pas été trouvées.");
+        }
     }
 }

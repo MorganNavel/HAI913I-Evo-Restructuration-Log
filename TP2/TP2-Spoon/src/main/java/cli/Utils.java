@@ -62,8 +62,9 @@ public class Utils {
         System.out.println("1: Afficher le graphe d'appels de méthodes.");
         System.out.println("2: Créer le fichier .dot et png du graphe d'appels.");
         System.out.println("\nCouplage:");
-        System.out.println("3: Afficher le couplage entre classes.");
-        System.out.println("4: Créer le fichier .dot et png du graphe de couplage entre classe.");
+        System.out.println("3: Calculer le couplage entre deux classes.");
+        System.out.println("4: Afficher le couplage entre classes.");
+        System.out.println("5: Créer le fichier .dot et png du graphe de couplage entre classe.");
         System.out.println("0: Retour au menu principal.\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }
@@ -72,7 +73,6 @@ public class Utils {
     public static void printMenuEx3() {
         System.out.println("\n--- Exercice 3 : Clustering & Identification de Modules ---");
         System.out.println("1: Clusterisation hiérarchique des classes.");
-
         System.out.println("0: Retour au menu principal.\n");
         System.out.print(CHOOSE_OPTION_PROMPT);
     }

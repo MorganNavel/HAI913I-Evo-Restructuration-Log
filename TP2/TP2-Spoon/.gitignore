@@ -36,3 +36,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Graph
+callGraph/
+couplingGraph/
+*.dot
+*.png
