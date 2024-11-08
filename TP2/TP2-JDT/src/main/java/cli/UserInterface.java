@@ -11,19 +11,22 @@ import visitors.VisitorCalculeStatistique;
 import visitors.VisitorMethodsOfClasses;
 
 public class UserInterface extends Cli {
-    public static String directoryPath = "";
+    public static String appDirectory = null;
 
     // Main method to run the application
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("Veuillez entrer le chemin du répertoire de l'application à analyser: ");
-            String appDirectory = chooseAppDirectory(scanner);
             while (appDirectory == null) {
                 System.out.print("Veuillez entrer le chemin du répertoire de l'application à analyser ou 'exit' pour quitter: ");
-                if (scanner.nextLine().equals("exit")) {
+                String input = scanner.nextLine().trim();
+                if (input.equalsIgnoreCase("exit")) {
+                    System.out.println("Au revoir!");
                     return;
                 }
-                appDirectory = chooseAppDirectory(scanner);
+                appDirectory = chooseAppDirectory(input);
+                if (appDirectory == null) {
+                    System.out.println(DIRECTORY_ERROR);
+                }
             }
 
             ClassAnalyzer analyzer = new ClassAnalyzer(appDirectory);
@@ -46,15 +49,13 @@ public class UserInterface extends Cli {
     }
 
     // Method to choose the application directory
-    private static String chooseAppDirectory(Scanner scanner) {
-        directoryPath = scanner.nextLine();
+    private static String chooseAppDirectory(String directoryPath) {
         File directory = new File(directoryPath);
 
         if (directory.exists() && directory.isDirectory()) {
-            System.out.println("Répertoire valide.");
+            System.out.println("Le répertoire '" + directoryPath + "' est valide.");
             return directoryPath;
         } else {
-            System.out.println(DIRECTORY_ERROR);
             return null;
         }
     }
