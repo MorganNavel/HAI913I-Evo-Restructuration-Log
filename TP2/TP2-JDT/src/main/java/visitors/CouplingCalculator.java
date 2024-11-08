@@ -17,10 +17,11 @@ public class CouplingCalculator extends VisitorMethodsOfClasses {
     // Method to calculate the coupling between two classes
     public double calculateCoupling(String classA, String classB) {
         int callsBetweenAandB = countCallsBetweenClasses(classA, classB);
-        int totalBinaryCalls = countTotalBinaryCalls();
+        int totalBinaryCalls = countTotalBinaryCalls(classA, classB);
         if (totalBinaryCalls == 0){
             return 0.0;
         }
+        System.out.println("Couplage "+classA+ " <--> "+classB+": "+(double) callsBetweenAandB / totalBinaryCalls);
         return (double) callsBetweenAandB / totalBinaryCalls;
     }
 
@@ -46,17 +47,21 @@ public class CouplingCalculator extends VisitorMethodsOfClasses {
     }
 
     // Method to count the total number of binary calls between methods of all classes
-    private int countTotalBinaryCalls() {
+    private int countTotalBinaryCalls(String classA, String classB) {
         int count = 0;
-        for (Map<String, List<Map<String, String>>> methodsInClass : callGraph.values()) {
-            for (List<Map<String, String>> calledMethods : methodsInClass.values()) {
-                for (Map<String, String> calledMethod : calledMethods) {
-                    String receiverType = calledMethod.get("receiverType");
-                    if (!receiverType.equals(VisitorMethodsOfClasses.UNKNOWN)) {
-                        count++;
-                    }
-                }
-            }
+        for (Entry<String, Map<String, List<Map<String, String>>>> methodsInClass : callGraph.entrySet()) {
+        	String className = methodsInClass.getKey();
+        	if(className.equals(classA) || className.equals(classB)) {
+              for (List<Map<String, String>> calledMethods : methodsInClass.getValue().values()) {
+                  for (Map<String, String> calledMethod : calledMethods) {
+                      String receiverType = calledMethod.get("receiverType");
+                      if (!receiverType.equals(VisitorMethodsOfClasses.UNKNOWN)) {
+                          count++;
+                      }
+                  }
+              }
+        	}
+ 
         }
         return count;
     }
