@@ -16,10 +16,14 @@ public class UserInterface extends Cli {
     // Main method to run the application
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Veuillez entrer le chemin du répertoire de l'application à analyser: ");
             String appDirectory = chooseAppDirectory(scanner);
-            if (appDirectory == null) {
-                System.out.println("Fermeture de l'application. Au revoir!");
-                return;
+            while (appDirectory == null) {
+                System.out.print("Veuillez entrer le chemin du répertoire de l'application à analyser ou 'exit' pour quitter: ");
+                if (scanner.nextLine().equals("exit")) {
+                    return;
+                }
+                appDirectory = chooseAppDirectory(scanner);
             }
 
             ClassAnalyzer analyzer = new ClassAnalyzer(appDirectory);
@@ -43,7 +47,6 @@ public class UserInterface extends Cli {
 
     // Method to choose the application directory
     private static String chooseAppDirectory(Scanner scanner) {
-        System.out.print("Entrez le chemin du répertoire de l'application à analyser: ");
         directoryPath = scanner.nextLine();
         File directory = new File(directoryPath);
 
