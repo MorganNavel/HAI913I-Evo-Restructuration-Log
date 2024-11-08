@@ -27,7 +27,7 @@ public class Utils {
 
     // Method to print the menu for the main menu
     public static void printMenu() {
-        System.out.println("\n--- Menu Principal ---");
+        System.out.println("\n--- Menu Principal - Analyse avec JDT ---");
         System.out.println("1: Exercice 1 - Analyse Code Source");
         System.out.println("2: Exercice 2 - Graphe D'appel et Couplage");
         System.out.println("3: Exercice 3 - Clustering et Identification de Modules");

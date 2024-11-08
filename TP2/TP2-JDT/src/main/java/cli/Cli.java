@@ -1,10 +1,7 @@
 package cli;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -32,6 +29,7 @@ public class Cli {
             switch (choice) {
                 case 1:
                     System.out.println("\nNombre de classes de l'application: " + visitor.getNbClasses());
+                    System.out.println("Classes: " + visitor.getClasses());
                     break;
                 case 2:
                     System.out.println("\nNombre de lignes de code de l'application: " + visitor.getSumMethodsLines());
@@ -41,6 +39,7 @@ public class Cli {
                     break;
                 case 4:
                     System.out.println("\nNombre total de packages de l'application: " + visitor.getNbPackages());
+                    System.out.println("Packages: " + visitor.getPackages());
                     break;
                 case 5:
                     System.out.println("\nNombre moyen de méthodes par classe: " + visitor.getAverageMethodsPerClass());

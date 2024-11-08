@@ -13,9 +13,9 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class VisitorCalculeStatistique extends Visitor {
-	private int nbClasses = 0;
-	private int nbMethods = 0;
+	private final ArrayList<String> classes = new ArrayList<>();
 	private final ArrayList<String> packages = new ArrayList<>();
+	private int nbMethods = 0;
 	private int sumMethodsLines = 0;
 	private int nbAttributes = 0;
 	private final HashMap<String,Integer> methodsByClass = new HashMap<>();
@@ -31,7 +31,7 @@ public class VisitorCalculeStatistique extends Visitor {
         int loc = endLine - startLine + 1;
         //System.out.println("Class : " + node.getName() + " | Nombre de lignes : " + loc);
         methodsByClass.put(node.getName().toString(), node.getMethods().length);
-		this.nbClasses++;
+		classes.add(node.getName().toString());
         attributesByClass.put(node.getName().toString(), node.getFields().length);
         HashMap<String, Integer> methods = new HashMap<>();
         for(MethodDeclaration m: node.getMethods()) {
@@ -56,7 +56,7 @@ public class VisitorCalculeStatistique extends Visitor {
 
 	@Override
 	public void displayResult() {
-		System.out.println("\nNombres de classes analysées: " + nbClasses);
+		System.out.println("\nNombres de classes analysées: " + getNbClasses());
 		System.out.println("Nombres de methodes analysées: " + nbMethods);
 		System.out.println("Nombres de packages dans l'application: " + packages.size());
 		System.out.println("Nombre moyen de méthode par classe: " + getAverageMethodsPerClass());
@@ -114,12 +114,19 @@ public class VisitorCalculeStatistique extends Visitor {
 
 
 	// Getters
+	public ArrayList<String> getClasses() {
+		return classes;
+	}
 	public int getNbClasses() {
-		return nbClasses;
+		return classes.size();
 	}
 
 	public int getNbMethods() {
 		return nbMethods;
+	}
+
+	public ArrayList<String> getPackages() {
+		return packages;
 	}
 
 	public int getNbPackages() {
@@ -131,7 +138,7 @@ public class VisitorCalculeStatistique extends Visitor {
 	}
 
 	public double getAverageMethodsPerClass() {
-		return (double) nbMethods / nbClasses;
+		return (double) nbMethods / getNbClasses();
 	}
 
 	public double getAverageLinesPerMethod() {
@@ -139,7 +146,7 @@ public class VisitorCalculeStatistique extends Visitor {
 	}
 
 	public double getAverageAttributesPerClass() {
-		return (double) nbAttributes / nbClasses;
+		return (double) nbAttributes / getNbClasses();
 	}
 
 	public HashMap<String, Integer> getMethodsByClass() {
@@ -161,4 +168,5 @@ public class VisitorCalculeStatistique extends Visitor {
 	public String getMethodsMaxParams() {
 		return methodsMaxParams;
 	}
+
 }
