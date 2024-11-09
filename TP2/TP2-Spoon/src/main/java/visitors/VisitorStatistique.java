@@ -1,7 +1,10 @@
 package visitors;
 
+import analyzer.SpoonParser;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.*;
 import spoon.reflect.visitor.CtScanner;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,11 +17,29 @@ public class VisitorStatistique extends CtScanner {
     private int totalAttributesCount = 0;
     private int maxParameters = 0;
     private final List<String> methodsWithMaxParams = new ArrayList<>();
-
     private final Map<String, Integer> methodsByClass = new HashMap<>();
     private final Map<String, Integer> attributesByClass = new HashMap<>();
     private final Map<String, Integer> lineCountByMethod = new HashMap<>();
 
+    // Method to launch the analysis of the application
+    public void launchAnalysis(CtModel model) {
+        if (model == null) {
+            System.out.println("Erreur : Modèle non initialisé.");
+            return;
+        }
+
+        List<CtPackage> packages = model.getElements(new TypeFilter<>(CtPackage.class));
+        for (CtPackage ctPackage : packages) {
+            scan(ctPackage);
+        }
+
+        List<CtClass<?>> classes = model.getElements(new TypeFilter<>(CtClass.class));
+        for (CtClass<?> ctClass : classes) {
+            scan(ctClass);
+        }
+    }
+
+    // Method to scan the classes of the application
     public void scan(CtClass<?> ctClass) {
         String className = ctClass.getQualifiedName();
         classes.add(className);
@@ -54,6 +75,7 @@ public class VisitorStatistique extends CtScanner {
         super.visitCtClass(ctClass);
     }
 
+    // Method to scan the packages of the application
     @Override
     public void visitCtPackage(CtPackage ctPackage) {
         if (!packages.contains(ctPackage.getQualifiedName()) && !ctPackage.getQualifiedName().isEmpty()) {

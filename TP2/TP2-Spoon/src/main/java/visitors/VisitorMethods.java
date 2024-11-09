@@ -7,8 +7,10 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
-import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.filter.TypeFilter;
+import utils.Pair;
+
+import static utils.Utils.generatePngFromDotFile;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,10 +18,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import static cli.Utils.generatePngFromDotFile;
-
 public class VisitorMethods {
-    private Map<String, Set<String>> methodCalls = new HashMap<>();
+    private final Map<String, Set<String>> methodCalls = new HashMap<>();
+    private final Map<Pair<String, String>, Double> couplingGraph = new HashMap<>();
+
+    // Method to launch the analysis of the methods
+    public void launchAnalysis(CtModel model) {
+        if (model == null) {
+            System.out.println("Erreur : Modèle non initialisé.");
+            return;
+        }
+
+        for (CtMethod<?> method : model.getElements(new TypeFilter<>(CtMethod.class))) {
+            scan(method);
+        }
+    }
 
     // Method to scan the called methods in a given method
     public void scan(CtMethod<?> method) {
@@ -43,7 +56,7 @@ public class VisitorMethods {
         });
     }
 
-
+    // Method to find a class by its name in the model
     public CtClass<?> findClassByName(CtModel model, String className) {
         for (CtType<?> ctType : model.getAllTypes()) {
             if ((ctType instanceof CtClass ) && (ctType.getSimpleName().equals(className) || ctType.getQualifiedName().equals(className))) {
@@ -121,6 +134,7 @@ public class VisitorMethods {
         generatePngFromDotFile(dotFilename, pngFilename);
     }
 
+    // Method to calculate the coupling between two classes
     public double calculateCouplingBetweenClasses(CtModel model, CtClass<?> classA, CtClass<?> classB) {
         int totalRelations = 0;
         int relationsBetweenAAndB = 0;
@@ -145,6 +159,7 @@ public class VisitorMethods {
         return (double) relationsBetweenAAndB / totalRelations;
     }
 
+    // Method to count the calls to a class in a method
     private int countCallsToClass(CtMethod<?> method, String className) {
         List<CtInvocation<?>> invocations = method.getElements(new TypeFilter<>(CtInvocation.class));
         int count = 0;
@@ -160,13 +175,78 @@ public class VisitorMethods {
         return count;
     }
 
+    // Method to count the method calls in a method
     private int countMethodCalls(CtMethod<?> method) {
         return method.getElements(new TypeFilter<>(CtInvocation.class)).size();
     }
 
-    public void displayCouplingGraph() {
+    // Method to generate the coupling graph
+    public void generateCouplingGraph(CtModel model) {
+        List<CtClass<?>> classes = model.getElements(new TypeFilter<>(CtClass.class));
+
+        for (CtClass<?> classA : classes) {
+            for (CtClass<?> classB : classes) {
+                if (!classA.equals(classB)) {
+                    double coupling = calculateCouplingBetweenClasses(model, classA, classB);
+                    couplingGraph.put(new Pair<>(classA.getQualifiedName(), classB.getQualifiedName()), coupling);
+                }
+            }
+        }
     }
 
+    // Method to display the coupling graph
+    public void displayCouplingGraph() {
+        System.out.println("\nGraphe de couplage :");
+
+        // Convert the entry set to a list and sort it
+        List<Map.Entry<Pair<String, String>, Double>> sortedEntries = new ArrayList<>(couplingGraph.entrySet());
+        sortedEntries.sort(Map.Entry.comparingByKey( (o1, o2) -> {
+            if (o1.getLeft().equals(o2.getLeft())) {
+                return o1.getRight().compareTo(o2.getRight());
+            }
+            return o1.getLeft().compareTo(o2.getLeft());
+        }));
+
+        for (Map.Entry<Pair<String, String>, Double> entry : sortedEntries) {
+            Pair<String, String> classes = entry.getKey();
+            double coupling = entry.getValue();
+            if (coupling > 0) {
+                System.out.println("Couplage entre " + classes.getLeft() + " et " + classes.getRight() + " : " + coupling);
+            }
+        }
+    }
+
+    // Method to create the .dot and .png files of the coupling graph
     public void createCouplingGraph() {
+        String directoryName = "couplingGraph";
+        String dotFilename = directoryName + "/couplingGraph.dot";
+        String pngFilename = directoryName + "/couplingGraph.png";
+
+        // Create the directory if it doesn't exist
+        File directory = new File(directoryName);
+        if(!directory.exists()) {
+            directory.mkdir();
+        }
+
+        // Create the .dot file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilename))) {
+            writer.write("graph CouplingGraph {\n");
+
+            for (Map.Entry<Pair<String, String>, Double> entry : couplingGraph.entrySet()) {
+                Pair<String, String> classes = entry.getKey();
+                double coupling = entry.getValue();
+                if (coupling > 0) {
+                    writer.write("\t\"" + classes.getLeft() + "\" -- \"" + classes.getRight() + "\" [label=\"" + coupling + "\"];\n");
+                }
+            }
+
+            writer.write("}\n");
+            System.out.println("\nFichier .dot créé avec succès : " + dotFilename);
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la création du fichier .dot : " + e.getMessage());
+        }
+
+        // Create the .png file from the .dot file
+        generatePngFromDotFile(dotFilename, pngFilename);
     }
 }

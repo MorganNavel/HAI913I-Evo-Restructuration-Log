@@ -3,8 +3,7 @@ package cli;
 import analyzer.SpoonParser;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.visitor.filter.TypeFilter;
+import utils.Utils;
 import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 
@@ -20,7 +19,7 @@ public class Cli {
     // Method to handle the user choice for the first exercise
     public static void handleEx1Choice(SpoonParser parser, Scanner scanner, VisitorStatistique visitor) throws IOException {
         boolean stayInEx1 = true;
-        parser.accept(visitor); // Launch the analysis with Spoon
+        visitor.launchAnalysis(parser.getModel()); // Launch the analysis with Spoon
         while (stayInEx1) {
             int choice = Utils.getUserChoice(scanner);
             if (choice == -1) {
@@ -117,7 +116,8 @@ public class Cli {
     // Method to handle the user choice for the second exercise
     public static void handleEx2Choice(SpoonParser parser, Scanner scanner, VisitorMethods visitorMethods) throws IOException {
         boolean stayInEx2 = true;
-        parser.accept(visitorMethods); // Launch the analysis with Spoon
+        visitorMethods.launchAnalysis(parser.getModel()); // Launch the analysis with Spoon
+        visitorMethods.generateCouplingGraph(parser.getModel()); // Generate the coupling graph
         while (stayInEx2) {
             int choice = Utils.getUserChoice(scanner);
             if (choice == -1) {
@@ -133,12 +133,12 @@ public class Cli {
                     break;
                 case 3:
                     calculateCouplingBetweenClasses(parser.getModel(), scanner, visitorMethods);
+                    break;
                 case 4:
                     visitorMethods.displayCouplingGraph();
                     break;
                 case 5:
                     visitorMethods.createCouplingGraph();
-
                     break;
                 case 0:
                     stayInEx2 = false;
@@ -168,7 +168,7 @@ public class Cli {
 
         if (classA != null && classB != null) {
             double coupling = visitorMethods.calculateCouplingBetweenClasses(model, classA, classB);
-            System.out.println("Couplage entre " + class1 + " et " + class2 + ": " + coupling);
+            System.out.println("\nCouplage entre " + class1 + " et " + class2 + " = " + coupling);
         } else {
             System.out.println("Erreur : Une ou les deux classes n'ont pas été trouvées.");
         }

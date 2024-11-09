@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import analyzer.SpoonParser;
+import utils.Utils;
 import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 

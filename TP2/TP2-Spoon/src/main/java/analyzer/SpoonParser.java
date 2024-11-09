@@ -31,32 +31,4 @@ public class SpoonParser {
         return model;
     }
 
-    public void accept(VisitorStatistique visitor) {
-        if (model == null) {
-            System.out.println("Erreur : Modèle non initialisé.");
-            return;
-        }
-
-        // Parcourir tous les packages et classes
-        List<CtPackage> packages = model.getElements(new TypeFilter<>(CtPackage.class));
-        for (CtPackage ctPackage : packages) {
-            visitor.scan(ctPackage);
-        }
-
-        List<CtClass<?>> classes = model.getElements(new TypeFilter<>(CtClass.class));
-        for (CtClass<?> ctClass : classes) {
-            visitor.scan(ctClass);
-        }
-    }
-
-    public void accept(VisitorMethods visitor) {
-        if (model == null) {
-            System.out.println("Erreur : Modèle non initialisé.");
-            return;
-        }
-
-        for (CtMethod<?> method : model.getElements(new TypeFilter<>(CtMethod.class))) {
-            visitor.scan(method);
-        }
-    }
 }
