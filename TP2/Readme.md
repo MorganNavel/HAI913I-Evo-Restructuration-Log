@@ -20,8 +20,8 @@ Ce TP est divisé en 2 projets :
 
 Pour choisir la méthode d'analyse, veuillez consulter les README spécifiques :
 
-- [README - Analyse avec JDT](./README-JDT.md)
-- [README - Analyse avec Spoon](./README-Spoon.md)
+- [README - Analyse avec JDT](./TP2-JDT/Readme.md)
+- [README - Analyse avec Spoon](./TP2-Spoon/Readme.md)
 
 ### Utilisation d'une CLI pour exécuter les différentes fonctionnalités de l'application.
 
