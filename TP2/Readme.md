@@ -36,8 +36,9 @@ Pour choisir la méthode d'analyse, veuillez consulter les README spécifiques :
 ### Installation
 
 1. Télécharger le zip du projet choisi à l'adresse suivante :
-    - [TP2-JDT]([https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2JDT_GILLES_NAVEL.zip])
-    - [TP2-Spoon]([https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2Spoon_GILLES_NAVEL.zip])
+    - [TP2-JDT](https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2JDT_GILLES_NAVEL.zip)
+    - [TP2-Spoon](https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2Spoon_GILLES_NAVEL.zip)
+    - [ou les deux](https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2_GILLES_NAVEL.zip)
 2. Décompresser le projet choisi dans un répertoire de votre choix.
 3. Ouvrir le projet dans votre éditeur de code (VScode, IntelliJ IDEA, Eclipse IDE)
 4. Ouvrir la classe `UserInterface.java` située dans le package `cli`.
