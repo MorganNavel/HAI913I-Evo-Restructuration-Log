@@ -1,6 +1,6 @@
-# Application d'analyse d'application Java avec Spoon
+# Application d'analyse d'application Java avec Eclipse JDT
 
-## TP 2 - Compréhension des programmes avec Spoon
+## TP 2 - Compréhension des programmes avec Eclipse JDT
 
 ### HAI913I : Évolution et Restructuration des Logiciels
 
@@ -10,6 +10,8 @@
 - [Morgan NAVEL](https://github.com/MorganNavel)
 
 ## Description de l'application
+Ce TP fait suite au projet d'analyse de code source réalisé :
+- [TP1 - Analyse statique de code source](https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/TP1_part2)
 
 Ce TP est divisé en 3 exercices :
 
@@ -58,7 +60,7 @@ Ce TP est divisé en 3 exercices :
 ### Installation
 
 1. Télécharger le zip du projet à l'adresse suivante :
-   [(https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2Spoon_GILLES_NAVEL.zip)]()
+   [(https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2JDT_GILLES_NAVEL.zip)]()
 2. Décompresser le projet dans un répertoire de votre choix.
 3. Ouvrir le projet dans votre éditeur de code (VScode, IntelliJ IDEA, Eclipse IDE)
 4. Ouvrir la classe `UserInterface.java` située dans le package `cli`.

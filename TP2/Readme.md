@@ -1,6 +1,6 @@
-# Application d'analyse d'application Java avec Spoon
+# Application d'analyse d'application Java
 
-## TP 2 - Compréhension des programmes avec Spoon
+## TP 2 - Compréhension des programmes
 
 ### HAI913I : Évolution et Restructuration des Logiciels
 
@@ -11,39 +11,17 @@
 
 ## Description de l'application
 
-Ce TP est divisé en 3 exercices :
+Ce TP est divisé en 2 projets :
 
-- Ex1 : Analyse Statique du Code Source d'une application
-- Ex2 : Construction du graphe d'appel de l'application
-- Ex3 : Clustering et Identification de Modules
+- Analyse avec JDT : [TP2-JDT](./TP2-JDT/)
+- Analyse avec Spoon : [TP2-Spoon](./TP2-Spoon/)
 
-### 1) Analyse Statique du Code Source d'une application pour calculer les informations suivantes :
+## Choix de l'analyse
 
-- Nombre de classes de l’application.
-- Nombre de lignes de code de l’application.
-- Nombre total de méthodes de l’application.
-- Nombre total de packages de l’application.
-- Nombre moyen de méthodes par classe.
-- Nombre moyen de lignes de code par méthode.
-- Nombre moyen d’attributs par classe.
-- Les 10% des classes qui possèdent le plus grand nombre de méthodes.
-- Les 10% des classes qui possèdent le plus grand nombre d’attributs.
-- Les classes qui font partie en même temps des deux catégories précédentes.
-- Les classes qui possèdent plus de X méthodes (la valeur de X est donnée).
-- Les 10% des méthodes qui possèdent le plus grand nombre de lignes de code (par classe).
-- Le nombre maximal de paramètres par rapport à toutes les méthodes de l’application.
+Pour choisir la méthode d'analyse, veuillez consulter les README spécifiques :
 
-### 2) Construction du graphe d'appel de l'application
-
-- Afficher le graphe d'appel de l'application sous forme de graphe orienté.
-- Création d'un fichier .dot afin de visualiser le graphe d'appel de l'application.
-- Calculer le couplage entre deux classes.
-- Afficher le couplage entre classes.
-- Créer le fichier .dot et png du graphe de couplage entre classes.
-
-### 3) Clustering et Identification de Modules
-
-- Clusterisation hiérarchique des classes.
+- [README - Analyse avec JDT](./README-JDT.md)
+- [README - Analyse avec Spoon](./README-Spoon.md)
 
 ### Utilisation d'une CLI pour exécuter les différentes fonctionnalités de l'application.
 
@@ -57,9 +35,10 @@ Ce TP est divisé en 3 exercices :
 
 ### Installation
 
-1. Télécharger le zip du projet à l'adresse suivante :
-   [(https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2Spoon_GILLES_NAVEL.zip)]()
-2. Décompresser le projet dans un répertoire de votre choix.
+1. Télécharger le zip du projet choisi à l'adresse suivante :
+    - [TP2-JDT]([https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2JDT_GILLES_NAVEL.zip])
+    - [TP2-Spoon]([https://github.com/MorganNavel/HAI913I-Evo-Restructuration-Log/releases/download/TP2/HAI913I_TP2Spoon_GILLES_NAVEL.zip])
+2. Décompresser le projet choisi dans un répertoire de votre choix.
 3. Ouvrir le projet dans votre éditeur de code (VScode, IntelliJ IDEA, Eclipse IDE)
 4. Ouvrir la classe `UserInterface.java` située dans le package `cli`.
 5. Exécuter la classe `UserInterface.java` en cliquant sur le bouton `Run` situé en haut à droite de la classe.
