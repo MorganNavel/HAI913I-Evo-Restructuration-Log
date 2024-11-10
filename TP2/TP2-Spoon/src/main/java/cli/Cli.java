@@ -4,6 +4,7 @@ import analyzer.SpoonParser;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;
 import utils.Utils;
+import visitors.ClusteringAlgorithm;
 import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 
@@ -132,7 +133,7 @@ public class Cli {
                     visitorMethods.createCallGraph();
                     break;
                 case 3:
-                    calculateCouplingBetweenClasses(parser.getModel(), scanner, visitorMethods);
+                    calculateClassesCouplingFromUser(parser.getModel(), scanner, visitorMethods);
                     break;
                 case 4:
                     visitorMethods.displayCouplingGraph();
@@ -155,7 +156,8 @@ public class Cli {
         }
     }
 
-    private static void calculateCouplingBetweenClasses(CtModel model, Scanner scanner, VisitorMethods visitorMethods) {
+    // Method to calculate the coupling between two classes entered by the user
+    private static void calculateClassesCouplingFromUser(CtModel model, Scanner scanner, VisitorMethods visitorMethods) {
         System.out.println("\nCouplage entre deux classes: ");
 
         System.out.print("Entrez le nom de la première classe: ");
@@ -167,10 +169,40 @@ public class Cli {
         CtClass<?> classB = visitorMethods.findClassByName(model, class2);
 
         if (classA != null && classB != null) {
-            double coupling = visitorMethods.calculateCouplingBetweenClasses(model, classA, classB);
+            double coupling = VisitorMethods.calculateCouplingBetweenClasses(model, classA.getSimpleName(), classB.getSimpleName());
             System.out.println("\nCouplage entre " + class1 + " et " + class2 + " = " + coupling);
         } else {
             System.out.println("Erreur : Une ou les deux classes n'ont pas été trouvées.");
         }
     }
+
+    // Method to handle the user choice for the third exercise
+    public static void handleEx3Choice(SpoonParser parser, Scanner scanner, ClusteringAlgorithm algorithm) throws IOException {
+        boolean stayInEx3 = true;
+        algorithm.launchAnalysis(parser.getModel()); // Launch the analysis with Spoon
+        while (stayInEx3) {
+            int choice = Utils.getUserChoice(scanner);
+            if (choice == -1) {
+                System.out.println(INVALID_NUMBER_ERROR);
+                return;
+            }
+            switch (choice) {
+                case 1:
+                    algorithm.performClustering(20, 0.00015);
+                    break;
+                case 0:
+                    stayInEx3 = false;
+                    System.out.println("Retour au menu principal.");
+                    break;
+                default:
+                    System.out.println("Choix invalide.");
+                    break;
+            }
+            if (stayInEx3) {
+                System.out.print("\n");
+                Utils.printMenuEx3();
+            }
+        }
+    }
+
 }

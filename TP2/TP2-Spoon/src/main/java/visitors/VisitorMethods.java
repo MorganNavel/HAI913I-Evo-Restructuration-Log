@@ -135,7 +135,7 @@ public class VisitorMethods {
     }
 
     // Method to calculate the coupling between two classes
-    public double calculateCouplingBetweenClasses(CtModel model, CtClass<?> classA, CtClass<?> classB) {
+    public static double calculateCouplingBetweenClasses(CtModel model, String classA, String classB) {
         int totalRelations = 0;
         int relationsBetweenAAndB = 0;
 
@@ -146,11 +146,11 @@ public class VisitorMethods {
                 for (CtMethod<?> method : ctClass.getMethods()) {
                     totalRelations += countMethodCalls(method);
 
-                    if (ctClass.getSimpleName().equals(classA.getSimpleName())) {
-                        relationsBetweenAAndB += countCallsToClass(method, classB.getSimpleName());
+                    if (ctClass.getSimpleName().equals(classA) || ctClass.getQualifiedName().equals(classA)) {
+                        relationsBetweenAAndB += countCallsToClass(method, classB);
                     }
-                    if (ctClass.getSimpleName().equals(classB.getSimpleName())) {
-                        relationsBetweenAAndB += countCallsToClass(method, classA.getSimpleName());
+                    if (ctClass.getSimpleName().equals(classB) || ctClass.getQualifiedName().equals(classB)) {
+                        relationsBetweenAAndB += countCallsToClass(method, classA);
                     }
                 }
             }
@@ -160,7 +160,7 @@ public class VisitorMethods {
     }
 
     // Method to count the calls to a class in a method
-    private int countCallsToClass(CtMethod<?> method, String className) {
+    private static int countCallsToClass(CtMethod<?> method, String className) {
         List<CtInvocation<?>> invocations = method.getElements(new TypeFilter<>(CtInvocation.class));
         int count = 0;
         for (CtInvocation<?> invocation : invocations) {
@@ -176,7 +176,7 @@ public class VisitorMethods {
     }
 
     // Method to count the method calls in a method
-    private int countMethodCalls(CtMethod<?> method) {
+    private static int countMethodCalls(CtMethod<?> method) {
         return method.getElements(new TypeFilter<>(CtInvocation.class)).size();
     }
 
@@ -187,7 +187,7 @@ public class VisitorMethods {
         for (CtClass<?> classA : classes) {
             for (CtClass<?> classB : classes) {
                 if (!classA.equals(classB)) {
-                    double coupling = calculateCouplingBetweenClasses(model, classA, classB);
+                    double coupling = calculateCouplingBetweenClasses(model, classA.getSimpleName(), classB.getSimpleName());
                     couplingGraph.put(new Pair<>(classA.getQualifiedName(), classB.getQualifiedName()), coupling);
                 }
             }

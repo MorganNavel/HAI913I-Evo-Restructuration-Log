@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import analyzer.SpoonParser;
 import utils.Utils;
+import visitors.ClusteringAlgorithm;
 import visitors.VisitorMethods;
 import visitors.VisitorStatistique;
 
@@ -34,13 +35,14 @@ public class UserInterface extends Cli {
             SpoonParser parser = new SpoonParser(directoryPath);
             VisitorStatistique visitor = new VisitorStatistique();
             VisitorMethods visitorMethods = new VisitorMethods();
+            ClusteringAlgorithm algorithm = new ClusteringAlgorithm();
 
             boolean running = true;
             while (running) {
                 Utils.printMenu();
                 String input = scanner.nextLine();
                 try {
-                    running = handleUserChoice(input, scanner, parser, visitor, visitorMethods);
+                    running = handleUserChoice(input, scanner, parser, visitor, visitorMethods, algorithm);
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
@@ -62,7 +64,7 @@ public class UserInterface extends Cli {
 
     // Method to handle the user choice
     public static boolean handleUserChoice(String input, Scanner scanner, SpoonParser parser, VisitorStatistique visitor,
-                                           VisitorMethods visitorMethods) throws IOException {
+                                           VisitorMethods visitorMethods, ClusteringAlgorithm algorithm) throws IOException {
         if (Utils.isNumeric(input)) {
             int choice = Integer.parseInt(input);
             switch (choice) {
@@ -76,6 +78,7 @@ public class UserInterface extends Cli {
                     break;
                 case 3:
                 	Utils.printMenuEx3();
+                    handleEx3Choice(parser, scanner, algorithm);
                     break;
                 case 0:
                     System.out.println("Au revoir!");

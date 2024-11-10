@@ -1,6 +1,5 @@
 package visitors;
 
-import analyzer.SpoonParser;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.*;
 import spoon.reflect.visitor.CtScanner;
@@ -28,13 +27,13 @@ public class VisitorStatistique extends CtScanner {
             return;
         }
 
-        List<CtPackage> packages = model.getElements(new TypeFilter<>(CtPackage.class));
-        for (CtPackage ctPackage : packages) {
+        List<CtPackage> ctPackages = model.getElements(new TypeFilter<>(CtPackage.class));
+        for (CtPackage ctPackage : ctPackages) {
             scan(ctPackage);
         }
 
-        List<CtClass<?>> classes = model.getElements(new TypeFilter<>(CtClass.class));
-        for (CtClass<?> ctClass : classes) {
+        List<CtClass<?>> ctClasses = model.getElements(new TypeFilter<>(CtClass.class));
+        for (CtClass<?> ctClass : ctClasses) {
             scan(ctClass);
         }
     }
