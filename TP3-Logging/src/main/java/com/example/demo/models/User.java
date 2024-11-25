@@ -1,42 +1,45 @@
 package com.example.demo.models;
-
-import jakarta.persistence.*;
-
-
-@Entity(name="users")
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+@Entity(name = "users")
 @Access(AccessType.FIELD)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private long userId;
-    
-    @Column(name="name")
+
+    @Column(name = "name")
     private String name;
 
-    @Column(name="email", unique = true)
+    @Column(name = "email", unique = true)
     private String email;
-    
-    @Column(name="password")
+
+    @Column(name = "password")
     private String password;
-    
-    @Column(name="age")
+
+    @Column(name = "age")
     private int age;
 
-
-
     public int getAge() {
-    	return this.age;
+        return this.age;
     }
-    
+
     public void setAge(int age) {
-    	this.age=age;
+        this.age = age;
     }
+
     public String getName() {
-    	return this.name;
+        return this.name;
     }
+
     public void setName(String name) {
-    	this.name = name;
+        this.name = name;
     }
 
     public long getUserId() {
@@ -47,7 +50,6 @@ public class User {
         this.userId = userId;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -55,8 +57,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-
 
     public String getEmail() {
         return email;
