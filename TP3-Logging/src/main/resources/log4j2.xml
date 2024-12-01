@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug">
+    <Appenders>
+        <File name="JSON" fileName="logs/user-actions.json">
+            <JsonLayout eventEol="true" />
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="JSON" />
+        </Root>
+    </Loggers>
+</Configuration>

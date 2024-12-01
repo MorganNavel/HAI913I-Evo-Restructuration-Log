@@ -8,8 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.util.Date;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity(name = "products")
 @Access(AccessType.FIELD)
+@Getter
+@Setter
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,31 +26,4 @@ public class Product {
 
     @Column(name = "price")
     private double price;
-
-    @Column(name = "expiration_date")
-    private Date expirationDate;
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
 }

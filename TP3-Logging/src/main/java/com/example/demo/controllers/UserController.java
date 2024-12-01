@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controllers;
 import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
 import java.util.List;
@@ -25,23 +25,23 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     public User get(@PathVariable
-    Long id) {
-        return userRepository.findById(id).orElse(null);
+    Long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userId}")
     public void delete(@PathVariable
-    Long id) {
-        userRepository.deleteById(id);
+    Long userId) {
+        userRepository.deleteById(userId);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{userId}")
     public User update(@PathVariable
-    Long id, @RequestBody
+    Long userId, @RequestBody
     User user) {
-        User existingUser = userRepository.findById(id).orElse(null);
+        User existingUser = userRepository.findById(userId).orElse(null);
         if (existingUser == null) {
             return null;
         }

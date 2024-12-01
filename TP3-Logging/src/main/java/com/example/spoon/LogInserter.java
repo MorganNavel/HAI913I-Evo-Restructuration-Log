@@ -7,6 +7,7 @@ import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.factory.CodeFactory;
+import spoon.reflect.factory.Factory;
 
 import java.util.Collections;
 
@@ -30,12 +31,12 @@ public class LogInserter{
                         )
         ).forEach(ctElement -> {
             CtClass<?> ctClass = (CtClass<?>) ctElement;
+
             addLoggerToClass(ctClass);
             // Ajouter des logs dans les méthodes des contrôleurs
-            addDetailedLogsToHttpMethods(ctClass);
+            ctClass.getAllMethods().forEach(this::addLoggings);
             launcher.prettyprint();
         });
-
         // Exporter le projet transformé
         launcher.setSourceOutputDirectory(outputDir);
         launcher.prettyprint();
@@ -43,39 +44,34 @@ public class LogInserter{
         System.out.println("Logs détaillés ajoutés. Projet exporté dans : " + outputDir);
     }
 
-    private void addDetailedLogsToHttpMethods(CtClass<?> ctClass) {
-        for (CtMethod<?> method : ctClass.getMethods()) {
-            CodeFactory codeFactory = method.getFactory().Code();
+    private void addLoggings(CtMethod<?> method){
+        Factory factory = method.getFactory();
+        String operationType = getRequestType(method);
+        if (operationType != null) {
+            // Création d'un log JSON
 
-            if (isHttpMapping(method)) {
-                // Construire un log avec les arguments
-                StringBuilder logMessage = new StringBuilder("logger.info(\"");
-                logMessage.append("Requête ")
-                        .append(getRequestType(method))
-                        .append(" détectée : ")
-                        .append(method.getSimpleName())
-                        .append(" avec paramètres : ");
+            StringBuilder logBuilder = new StringBuilder();
 
-                for (CtParameter<?> parameter : method.getParameters()) {
-                    logMessage.append(parameter.getSimpleName())
-                            .append("=\" + ")
-                            .append(parameter.getSimpleName())
-                            .append(" + \", ");
+
+            // Extraction des paramètres pour userId et productId
+            for (CtParameter<?> parameter : method.getParameters()) {
+                if (parameter.getSimpleName().equalsIgnoreCase("userId")) {
+                    logBuilder.append("userId:\" + userId+\", ");
+                } else if (parameter.getSimpleName().equalsIgnoreCase("productId")) {
+                    logBuilder.append("productId:\" + productId+\"");
                 }
-
-                // Supprimer la dernière virgule et espace
-                if (!method.getParameters().isEmpty()) {
-                    logMessage.setLength(logMessage.length() - 2);
-                }
-
-                logMessage.append("\")");
-
-                // Ajouter le log au début de la méthode
-                CtCodeSnippetStatement logStatement = codeFactory.createCodeSnippetStatement(logMessage.toString());
-                method.getBody().insertBegin(logStatement);
             }
+
+
+            // Insertion du log au début de la méthode
+            CtCodeSnippetStatement logStatement = factory.Code().createCodeSnippetStatement(
+                    String.format("logger.info(\"%s\")", logBuilder)
+            );
+            method.getBody().insertBegin(logStatement);
         }
+
     }
+
     private void addLoggerToClass(CtClass<?> ctClass) {
         // Vérifier si un logger existe déjà
         if (ctClass.getFields().stream().noneMatch(f -> f.getSimpleName().equals("logger"))) {
@@ -94,17 +90,20 @@ public class LogInserter{
             ctClass.addFieldAtTop(loggerField);
         }
     }
-    private boolean isHttpMapping(CtMethod<?> method) {
-        return method.getAnnotations().stream().anyMatch(ann ->
-                ann.getAnnotationType().getSimpleName().matches("GetMapping|PostMapping|PutMapping|PatchMapping")
-        );
-    }
+
+
 
     private String getRequestType(CtMethod<?> method) {
-        return method.getAnnotations().stream()
+        String operation = method.getAnnotations().stream()
                 .map(ann -> ann.getAnnotationType().getSimpleName())
                 .filter(name -> name.matches("GetMapping|PostMapping|PutMapping|PatchMapping"))
                 .findFirst()
                 .orElse("UNKNOWN");
+        switch (operation){
+            case "GetMapping": return "READ";
+            case "UNKNOWN": return "UNKNOWN";
+
+        }
+        return "WRITE";
     }
 }

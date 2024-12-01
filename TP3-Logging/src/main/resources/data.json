@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "email":"user1@gmail.com",
+      "name": "user1",
+      "password": "mypassword",
+      "age": 21
+    },
+    {
+      "email":"user2@gmail.com",
+      "name": "user2",
+      "password": "mypassword",
+      "age": 22
+    },
+    {
+      "email":"user3@gmail.com",
+      "name": "morgan",
+      "password": "mypassword",
+      "age": 23
+    }
+  ],
+  "products": [
+    {
+      "name": "product1",
+      "price": 15.6
+    },
+    {
+      "name": "product2",
+      "price": 3.5
+    },
+    {
+      "name": "product3",
+      "price": 25
+    }
+  ]
+}
