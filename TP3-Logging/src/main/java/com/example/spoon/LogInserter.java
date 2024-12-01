@@ -51,14 +51,15 @@ public class LogInserter{
             // Création d'un log JSON
 
             StringBuilder logBuilder = new StringBuilder();
+            logBuilder.append("operation: ").append(operationType);
 
 
             // Extraction des paramètres pour userId et productId
             for (CtParameter<?> parameter : method.getParameters()) {
                 if (parameter.getSimpleName().equalsIgnoreCase("userId")) {
-                    logBuilder.append("userId:\" + userId+\", ");
+                    logBuilder.append(", userId:\" + userId+\"");
                 } else if (parameter.getSimpleName().equalsIgnoreCase("productId")) {
-                    logBuilder.append("productId:\" + productId+\"");
+                    logBuilder.append(", productId:\" + productId+\"");
                 }
             }
 
