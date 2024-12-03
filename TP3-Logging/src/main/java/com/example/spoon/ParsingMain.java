@@ -3,7 +3,7 @@ package com.example.spoon;
 
 import java.util.Scanner;
 
-public class Main {
+public class ParsingMain {
     public static void main(String[] args) {
         // Chemin du code source
 

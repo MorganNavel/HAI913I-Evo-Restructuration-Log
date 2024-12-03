@@ -1,0 +1,8 @@
+2024-12-03 13:23:40.419 [http-nio-8080-exec-1] INFO  generated.com.example.demo.controllers.ProductController - operation: READ
+2024-12-03 13:30:02.569 [http-nio-8080-exec-3] INFO  generated.com.example.demo.controllers.ProductController - operation: READ
+2024-12-03 13:30:19.411 [http-nio-8080-exec-5] INFO  generated.com.example.demo.controllers.ProductController - operation: READ, userId:1, productId:1
+2024-12-03 13:30:40.833 [http-nio-8080-exec-7] INFO  generated.com.example.demo.controllers.UserController - operation: READ
+2024-12-03 13:30:49.153 [http-nio-8080-exec-9] INFO  generated.com.example.demo.controllers.UserController - operation: READ, userId:1
+2024-12-03 13:37:53.896 [http-nio-8080-exec-1] INFO  generated.com.example.demo.controllers.UserController - operation: READ, userId:1
+2024-12-03 13:39:20.298 [http-nio-8080-exec-3] INFO  generated.com.example.demo.controllers.UserController - operation: READ, userId:1
+2024-12-03 13:39:31.656 [http-nio-8080-exec-1] INFO  generated.com.example.demo.controllers.UserController - operation: READ, userId:1

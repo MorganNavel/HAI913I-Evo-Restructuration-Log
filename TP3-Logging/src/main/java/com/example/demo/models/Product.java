@@ -26,4 +26,29 @@ public class Product {
 
     @Column(name = "price")
     private double price;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
 }

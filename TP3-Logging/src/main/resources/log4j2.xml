@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="debug">
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_DIR">./logs</Property>
+        <Property name="LOG_FILE">${LOG_DIR}/app.log</Property>
+    </Properties>
     <Appenders>
-        <File name="JSON" fileName="logs/user-actions.json">
-            <JsonLayout eventEol="true" />
-        </File>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${LOG_FILE}"
+                     filePattern="${LOG_FILE}-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
     </Appenders>
-
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="JSON" />
+            <AppenderRef ref="Console"/>
         </Root>
+        <Logger name="generated.com.example.demo.controllers" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
     </Loggers>
 </Configuration>

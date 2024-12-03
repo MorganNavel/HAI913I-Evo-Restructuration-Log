@@ -6,7 +6,6 @@ import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
-import spoon.reflect.factory.CodeFactory;
 import spoon.reflect.factory.Factory;
 
 import java.util.Collections;
@@ -47,29 +46,27 @@ public class LogInserter{
     private void addLoggings(CtMethod<?> method){
         Factory factory = method.getFactory();
         String operationType = getRequestType(method);
-        if (operationType != null) {
-            // Création d'un log JSON
+        // Création d'un log JSON
 
-            StringBuilder logBuilder = new StringBuilder();
-            logBuilder.append("operation: ").append(operationType);
+        StringBuilder logBuilder = new StringBuilder();
+        logBuilder.append("operation: ").append(operationType);
 
 
-            // Extraction des paramètres pour userId et productId
-            for (CtParameter<?> parameter : method.getParameters()) {
-                if (parameter.getSimpleName().equalsIgnoreCase("userId")) {
-                    logBuilder.append(", userId:\" + userId+\"");
-                } else if (parameter.getSimpleName().equalsIgnoreCase("productId")) {
-                    logBuilder.append(", productId:\" + productId+\"");
-                }
+        // Extraction des paramètres pour userId et productId
+        for (CtParameter<?> parameter : method.getParameters()) {
+            if (parameter.getSimpleName().equalsIgnoreCase("userId")) {
+                logBuilder.append(", userId:\" + userId+\"");
+            } else if (parameter.getSimpleName().equalsIgnoreCase("productId")) {
+                logBuilder.append(", productId:\" + productId+\"");
             }
-
-
-            // Insertion du log au début de la méthode
-            CtCodeSnippetStatement logStatement = factory.Code().createCodeSnippetStatement(
-                    String.format("logger.info(\"%s\")", logBuilder)
-            );
-            method.getBody().insertBegin(logStatement);
         }
+
+
+        // Insertion du log au début de la méthode
+        CtCodeSnippetStatement logStatement = factory.Code().createCodeSnippetStatement(
+                String.format("logger.info(\"%s\")", logBuilder)
+        );
+        method.getBody().insertBegin(logStatement);
 
     }
 
@@ -83,7 +80,7 @@ public class LogInserter{
                     ctClass.getFactory().Type().createReference("org.apache.logging.log4j.Logger"), // Type du champ
                     "logger", // Nom du champ
                     ctClass.getFactory().Code().createCodeSnippetExpression(
-                            "org.apache.logging.log4j.LogManager.getLogger(" + ctClass.getSimpleName() + ".class)"
+                            "org.apache.logging.log4j.LogManager.getLogger("+ctClass.getSimpleName()+".class)"
                     ) // Initialisation
             );
 
