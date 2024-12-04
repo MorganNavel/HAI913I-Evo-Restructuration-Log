@@ -52,7 +52,8 @@ public class LogInserter{
         logBuilder.append("\"{");
         logBuilder.append("  \\\"operation\\\": \\\"").append(operationType).append("\\\"");
 
-        boolean hasUserId = false, hasProductId = false;
+        boolean hasUserId = false;
+        boolean hasProductId = false;
 
         // Extraction des paramètres pour userId et productId
         for (CtParameter<?> parameter : method.getParameters()) {
@@ -68,10 +69,10 @@ public class LogInserter{
 
         // Ajout des requêtes dynamiques pour enrichir le log avec des détails utilisateur/produit
         if (hasUserId) {
-            logBuilder.append(",  \\\"userDetails\\\": \" +"+ fetchUserDetails("userId") +"+ \"");
+            logBuilder.append(",  \\\"userDetails\\\": \" +").append(fetchUserDetails("userId")).append("+ \"");
         }
         if (hasProductId) {
-            logBuilder.append(",\\n  \\\"productDetails\\\": \" +"+ fetchProductDetails("productId") +"+ \"");
+            logBuilder.append(",\\n  \\\"productDetails\\\": \" +").append(fetchProductDetails("productId")).append("+ \"");
         }
 
         logBuilder.append("}\"");
@@ -120,11 +121,10 @@ public class LogInserter{
                 .filter(name -> name.matches("GetMapping|PostMapping|PutMapping|PatchMapping"))
                 .findFirst()
                 .orElse("UNKNOWN");
-        switch (operation){
-            case "GetMapping": return "READ";
-            case "UNKNOWN": return "UNKNOWN";
-
-        }
-        return "WRITE";
+        return switch (operation) {
+            case "GetMapping" -> "READ";
+            case "UNKNOWN" -> "UNKNOWN";
+            default -> "WRITE";
+        };
     }
 }

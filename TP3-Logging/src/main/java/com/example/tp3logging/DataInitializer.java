@@ -1,7 +1,7 @@
-package com.example.demo;
+package com.example.tp3logging;
 
-import com.example.demo.repositories.ProductRepository;
-import com.example.demo.repositories.UserRepository;
+import com.example.tp3logging.repositories.ProductRepository;
+import com.example.tp3logging.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -11,12 +11,14 @@ import java.io.InputStream;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
-
+    @Autowired
+    public DataInitializer(UserRepository userRepository, ProductRepository productRepository) {
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+    }
 
     @Override
     public void run(String... args) throws Exception {

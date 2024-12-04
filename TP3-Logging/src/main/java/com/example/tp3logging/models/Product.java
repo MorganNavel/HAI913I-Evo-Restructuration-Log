@@ -1,4 +1,5 @@
-package com.example.demo.models;
+package com.example.tp3logging.models;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Access;
@@ -8,15 +9,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.util.Date;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Min;
 
+import java.util.Date;
+import lombok.Data;
+
+@Data
 @Entity(name = "products")
 @Access(AccessType.FIELD)
-@Getter
-@Setter
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,31 +27,11 @@ public class Product {
     private String name;
 
     @Column(name = "price")
+    @Min(value = 0L, message = "Price should not be less than 0")
     private double price;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public long getProductId() {
-        return productId;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setProductId(long productId) {
-        this.productId = productId;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    @Column(name = "expiration_date")
+    private Date expirationDate;
 
     @Override
     public String toString() {
@@ -59,9 +39,8 @@ public class Product {
         try {
             return objectMapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            System.err.println("Error while converting Product to JSON");
             return "{}"; // Retourne un JSON vide en cas d'erreur
         }
     }
-
 }

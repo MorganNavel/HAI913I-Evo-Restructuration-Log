@@ -1,10 +1,14 @@
 package com.example.spoon;
 
+import lombok.Getter;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 
+@Getter
 public class SpoonParser {
+    // Récupérer le Launcher pour d'autres configurations (optionnel)
     private final Launcher launcher; // Instance Spoon
+    // Récupérer le modèle construit
     private final CtModel model;     // Modèle construit
 
     public SpoonParser(String srcDir) {
@@ -20,13 +24,4 @@ public class SpoonParser {
         this.model = launcher.getModel();
     }
 
-    // Récupérer le modèle construit
-    public CtModel getModel() {
-        return model;
-    }
-
-    // Récupérer le Launcher pour d'autres configurations (optionnel)
-    public Launcher getLauncher() {
-        return launcher;
-    }
 }

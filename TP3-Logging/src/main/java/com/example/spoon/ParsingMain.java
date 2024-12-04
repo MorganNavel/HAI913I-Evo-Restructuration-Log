@@ -5,20 +5,21 @@ import java.util.Scanner;
 
 public class ParsingMain {
     public static void main(String[] args) {
-        // Chemin du code source
+        try (Scanner scanner = new Scanner(System.in)) { // Récupérer le numéro du projet via l'entrée utilisateur
+            System.out.print("Donnez le chemin vers le code source de l'API : ");
+            String sourceDir = scanner.next();
 
-        // Récupérer le numéro du projet via l'entrée utilisateur
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Donnez le chemin vers le code source de l'API : ");
-        String sourceDir = scanner.next();
+            // Initialiser le parser Spoon
+            SpoonParser parser = new SpoonParser(sourceDir);
 
-        // Initialiser le parser Spoon
-        SpoonParser parser = new SpoonParser(sourceDir);
+            // Initialiser le transformateur InsertLogger
+            LogInserter insertLogger = new LogInserter(parser);
 
-        // Initialiser le transformateur InsertLogger
-        LogInserter insertLogger = new LogInserter(parser);
-
-        // Appliquer les transformations et écrire le code transformé
-        insertLogger.process("src/main/java/generated");
+            // Appliquer les transformations et écrire le code transformé
+            insertLogger.process("src/main/java/generated");
+        }
+        catch (Exception e) {
+            System.err.println("Erreur lors de l'exécution du programme : " + e.getMessage());
+        }
     }
 }
