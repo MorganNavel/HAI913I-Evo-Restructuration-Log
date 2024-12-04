@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public class JWTService {
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secret;
 
     private Algorithm getAlgorithm() {
