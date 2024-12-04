@@ -31,12 +31,10 @@ import java.util.Optional;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final AuthenticationProvider authenticationProvider;
     private final UserRepository userRepository;
 
     @Autowired
-    public SecurityConfig(AuthenticationProvider authenticationProvider, UserRepository userRepository) {
-        this.authenticationProvider = authenticationProvider;
+    public SecurityConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -49,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/products/**").permitAll()  // Allow access to product endpoints
                         .anyRequest().authenticated()  // Require authentication for other requests
                 ).sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Disable session creation
-                .authenticationProvider(authenticationProvider);  // Use custom authentication provider
+                .authenticationProvider(authenticationProvider());  // Use custom authentication provider
         // Allow frames to be displayed (for H2 console)
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
