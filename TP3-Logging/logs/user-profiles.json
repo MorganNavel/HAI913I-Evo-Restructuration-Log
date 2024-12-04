@@ -1,0 +1,18 @@
+{
+  "1" : {
+    "userId" : 1,
+    "readCount" : 3,
+    "writeCount" : 0,
+    "productPrices" : [ 15.6, 3.5 ],
+    "user" : {
+      "userId" : 1,
+      "name" : "user1",
+      "email" : "user1@gmail.com",
+      "password" : "mypassword",
+      "age" : 21
+    },
+    "boughtMostExpensive" : false,
+    "mostlyRead" : true,
+    "mostlyWrite" : false
+  }
+}

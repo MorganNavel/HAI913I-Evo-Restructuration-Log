@@ -1,4 +1,6 @@
 package com.example.demo.models;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -69,4 +71,15 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    @Override
+    public String toString() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "null"; // Retourne un JSON vide en cas d'erreur
+        }
+    }
+
 }

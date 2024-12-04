@@ -43,32 +43,55 @@ public class LogInserter{
         System.out.println("Logs détaillés ajoutés. Projet exporté dans : " + outputDir);
     }
 
-    private void addLoggings(CtMethod<?> method){
+    private void addLoggings(CtMethod<?> method) {
         Factory factory = method.getFactory();
         String operationType = getRequestType(method);
-        // Création d'un log JSON
 
+        // Construction du log JSON
         StringBuilder logBuilder = new StringBuilder();
-        logBuilder.append("operation: ").append(operationType);
+        logBuilder.append("\"{");
+        logBuilder.append("  \\\"operation\\\": \\\"").append(operationType).append("\\\"");
 
+        boolean hasUserId = false, hasProductId = false;
 
         // Extraction des paramètres pour userId et productId
         for (CtParameter<?> parameter : method.getParameters()) {
-            if (parameter.getSimpleName().equalsIgnoreCase("userId")) {
-                logBuilder.append(", userId:\" + userId+\"");
-            } else if (parameter.getSimpleName().equalsIgnoreCase("productId")) {
-                logBuilder.append(", productId:\" + productId+\"");
+            String paramName = parameter.getSimpleName();
+            if (paramName.equalsIgnoreCase("userId")) {
+                hasUserId = true;
+                logBuilder.append(",  \\\"userId\\\": \" + userId + \"");
+            } else if (paramName.equalsIgnoreCase("productId")) {
+                hasProductId = true;
+                logBuilder.append(",  \\\"productId\\\": \" + productId + \"");
             }
         }
 
+        // Ajout des requêtes dynamiques pour enrichir le log avec des détails utilisateur/produit
+        if (hasUserId) {
+            logBuilder.append(",  \\\"userDetails\\\": \" +"+ fetchUserDetails("userId") +"+ \"");
+        }
+        if (hasProductId) {
+            logBuilder.append(",\\n  \\\"productDetails\\\": \" +"+ fetchProductDetails("productId") +"+ \"");
+        }
+
+        logBuilder.append("}\"");
 
         // Insertion du log au début de la méthode
         CtCodeSnippetStatement logStatement = factory.Code().createCodeSnippetStatement(
-                String.format("logger.info(\"%s\")", logBuilder)
+                String.format("logger.info(%s)", logBuilder.toString())
         );
         method.getBody().insertBegin(logStatement);
-
     }
+
+
+    private String fetchUserDetails(String userId) {
+        return "userRepository.findById(" + userId + ").orElse(null).toString()";
+    }
+
+    private String fetchProductDetails(String productId) {
+        return "productRepository.findById(" + productId + ").orElse(null).toString()";
+    }
+
 
     private void addLoggerToClass(CtClass<?> ctClass) {
         // Vérifier si un logger existe déjà
