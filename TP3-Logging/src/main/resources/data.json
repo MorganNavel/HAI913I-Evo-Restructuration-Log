@@ -22,15 +22,18 @@
   "products": [
     {
       "name": "product1",
-      "price": 15.6
+      "price": 15.6,
+      "expirationDate": "2025-12-31"
     },
     {
       "name": "product2",
-      "price": 3.5
+      "price": 3.5,
+      "expirationDate": "2025-12-31"
     },
     {
       "name": "product3",
-      "price": 25
+      "price": 25,
+      "expirationDate": "2025-12-31"
     }
   ]
 }
