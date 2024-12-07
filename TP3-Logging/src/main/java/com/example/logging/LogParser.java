@@ -1,6 +1,8 @@
+package com.example.logging;
+
+import com.example.logging.models.LogEntry;
+import com.example.logging.models.UserProfile;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import models.LogEntry;
-import models.UserProfile;
 
 import java.io.*;
 import java.util.HashMap;

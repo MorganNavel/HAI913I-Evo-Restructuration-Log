@@ -114,10 +114,13 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
-
 	</dependencies>
 
 	<build>
+		<!-- Spoon & Logging generated code from the API -->
+		<!--<sourceDirectory>src/main/generated/</sourceDirectory>-->
+		<!-- API Source code without Spoon & Logging -->
+		<sourceDirectory>src/main/java/</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

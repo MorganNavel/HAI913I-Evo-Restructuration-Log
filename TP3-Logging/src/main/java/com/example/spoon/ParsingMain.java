@@ -1,6 +1,5 @@
 package com.example.spoon;
 
-
 import java.util.Scanner;
 
 public class ParsingMain {
@@ -16,7 +15,7 @@ public class ParsingMain {
             LogInserter insertLogger = new LogInserter(parser);
 
             // Appliquer les transformations et écrire le code transformé
-            insertLogger.process("src/main/java/generated");
+            insertLogger.process("src/main/generated");
         }
         catch (Exception e) {
             System.err.println("Erreur lors de l'exécution du programme : " + e.getMessage());

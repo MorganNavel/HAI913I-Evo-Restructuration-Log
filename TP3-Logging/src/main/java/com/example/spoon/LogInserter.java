@@ -11,7 +11,6 @@ import spoon.reflect.factory.Factory;
 import java.util.Collections;
 
 public class LogInserter{
-
     private final SpoonParser parser;
 
     public LogInserter(SpoonParser parser) {
@@ -84,7 +83,6 @@ public class LogInserter{
         method.getBody().insertBegin(logStatement);
     }
 
-
     private String fetchUserDetails(String userId) {
         return "userRepository.findById(" + userId + ").orElse(null).toString()";
     }
@@ -92,7 +90,6 @@ public class LogInserter{
     private String fetchProductDetails(String productId) {
         return "productRepository.findById(" + productId + ").orElse(null).toString()";
     }
-
 
     private void addLoggerToClass(CtClass<?> ctClass) {
         // Vérifier si un logger existe déjà
@@ -112,8 +109,6 @@ public class LogInserter{
             ctClass.addFieldAtTop(loggerField);
         }
     }
-
-
 
     private String getRequestType(CtMethod<?> method) {
         String operation = method.getAnnotations().stream()

@@ -1,3 +1,5 @@
+package com.example.logging;
+
 public class Main {
      public static void main(String[] args) throws Exception {
           LogParser logParser = new LogParser();

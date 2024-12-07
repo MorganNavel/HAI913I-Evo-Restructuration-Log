@@ -1,11 +1,12 @@
-package models;
+package com.example.logging.models;
 
-import generated.com.example.demo.models.User;
+import com.example.tp3logging.models.User;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Getter
 @Component
 public class UserProfile {
@@ -14,7 +15,8 @@ public class UserProfile {
     private int writeCount;
     private final List<Double> productPrices;
     private final User user;
-    private boolean boughtMostExpensive = false;
+    private final boolean boughtMostExpensive = false;
+
     public UserProfile(User user) {
         this.userId = user.getUserId();
         this.readCount = 0;

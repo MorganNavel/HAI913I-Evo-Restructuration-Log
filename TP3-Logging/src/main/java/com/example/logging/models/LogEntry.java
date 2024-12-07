@@ -1,7 +1,7 @@
-package models;
+package com.example.logging.models;
 
-import generated.com.example.demo.models.Product;
-import generated.com.example.demo.models.User;
+import com.example.tp3logging.models.Product;
+import com.example.tp3logging.models.User;
 import lombok.Getter;
 import lombok.Setter;
 
