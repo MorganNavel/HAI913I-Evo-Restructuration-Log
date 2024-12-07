@@ -4,6 +4,7 @@ import com.example.tp3logging.dto.LoginCredential;
 import com.example.tp3logging.models.User;
 import com.example.tp3logging.repositories.UserRepository;
 import com.example.tp3logging.services.JWTService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,16 +47,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginCredential loginCredential, HttpSession session){
+    public ResponseEntity<String> login(@RequestBody LoginCredential loginCredential, HttpServletRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginCredential.getEmail(), loginCredential.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        session.setAttribute("user", authentication.getPrincipal()); // Ajout de l'utilisateur à la session
-        var user = userRepository.findByEmail(loginCredential.getEmail()).orElseThrow(
+        request.getSession().setAttribute("user", authentication.getPrincipal()); // Add user to session
+        User user = userRepository.findByEmail(loginCredential.getEmail()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed"));
         return ResponseEntity.ok(jwtService.generateToken(user));
     }
-
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         session.invalidate();

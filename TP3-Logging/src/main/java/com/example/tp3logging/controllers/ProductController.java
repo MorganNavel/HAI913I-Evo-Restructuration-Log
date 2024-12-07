@@ -1,7 +1,6 @@
 package com.example.tp3logging.controllers;
 
 import com.example.tp3logging.models.Product;
-import com.example.tp3logging.models.User;
 import com.example.tp3logging.repositories.ProductRepository;
 import java.util.List;
 
@@ -17,12 +16,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
     @Autowired
     public ProductController(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
-        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -31,12 +28,10 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public Product get(@PathVariable Long productId, @RequestParam Long userId) {
-        if (userRepository.existsById(userId)) {
-            return productRepository.findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product with id " + productId + " not found"));
-        }
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+    @ResponseStatus(HttpStatus.OK)
+    public Product get(@PathVariable Long productId) {
+        return productRepository.findById(productId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product with id " + productId + " not found"));
     }
 
     @PostMapping("/product")

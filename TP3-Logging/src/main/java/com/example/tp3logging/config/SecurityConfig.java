@@ -1,32 +1,24 @@
 package com.example.tp3logging.config;
 
-import com.example.tp3logging.models.User;
 import com.example.tp3logging.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
@@ -45,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()  // Allow H2 console access
                         .requestMatchers("/api/users/**").permitAll()  // Allow access to user endpoints (for testing)
                         .requestMatchers("/api/products/**").permitAll()  // Allow access to product endpoints
+                        .requestMatchers("api/auth/**").permitAll()  // Allow access to auth endpoints
                         .anyRequest().authenticated()  // Require authentication for other requests
                 ).sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Disable session creation
                 .authenticationProvider(authenticationProvider());  // Use custom authentication provider
