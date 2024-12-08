@@ -34,3 +34,5 @@ build/
 
 ### Generated Spoon Code ###
 spooned/*
+src/main/generated/*
+logs/*

@@ -29,7 +29,7 @@ Ce TP est composé de 2 parties :
 
 4. Ouvrir la classe `ParsingMain.java` située dans le répertoire `src/main/java/com/example/spoon/`.
 
-5. Exécuter la classe `ParsingMain.java` en cliquant sur le bouton `Run` situé en haut à droite de la classe afin de parser et logguer le code source de l'application en donnant le chemin du répertoire de l'application à parser.
+5. Exécuter la classe `ParsingMain.java` en cliquant sur le bouton `Run` situé en haut à droite de la classe afin de parser et logguer le code source de l'application.
 
 6. Ouvrir le fichier `pom.xml` situé à la racine du projet et modifier le répertoire de l'application à build comme ci-dessous :
 

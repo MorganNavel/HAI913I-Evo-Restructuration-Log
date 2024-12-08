@@ -65,7 +65,7 @@ public class LogParser {
      }
      private void writeProfilesToFile(String outputFilename) {
           ObjectMapper objectMapper = new ObjectMapper();
-
+          objectMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
           try {
                // Vérifier si le fichier de sortie existe, sinon le créer
                File outputFile = new File(outputFilename);

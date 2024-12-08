@@ -115,7 +115,7 @@
 		<!-- Spoon & Logging generated code from the API -->
 		<sourceDirectory>src/main/generated/</sourceDirectory>
 		<!-- API Source code without Spoon & Logging -->
-<!--		<sourceDirectory>src/main/java/</sourceDirectory>-->
+		<!--<sourceDirectory>src/main/java/</sourceDirectory>-->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

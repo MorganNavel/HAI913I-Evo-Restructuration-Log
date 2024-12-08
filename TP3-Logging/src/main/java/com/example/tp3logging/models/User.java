@@ -1,6 +1,5 @@
 package com.example.tp3logging.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
@@ -11,6 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
+import org.apache.commons.lang3.builder.ToStringExclude;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity(name = "users")
@@ -28,6 +31,7 @@ public class User {
     private String email;
 
     @Column(name = "password")
+    @ToStringExclude
     private String password;
 
     @Column(name = "age")
@@ -37,8 +41,13 @@ public class User {
     @Override
     public String toString() {
         ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("userId", userId);
+        userMap.put("name", name);
+        userMap.put("email", email);
+        userMap.put("age", age);
         try {
-            return objectMapper.writeValueAsString(this);
+            return objectMapper.writeValueAsString(userMap);
         } catch (JsonProcessingException e) {
             System.err.println("Error while converting User to JSON");
             return "null"; // Retourne un JSON vide en cas d'erreur
