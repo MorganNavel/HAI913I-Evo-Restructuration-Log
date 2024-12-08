@@ -218,7 +218,7 @@ public class LogInserter{
     // Ajouter des logs pour la création de produit
     private void addLogForCreateProduct(CtMethod<?> method, Factory factory) {
         method.getBody().getStatements().stream()
-                .filter(statement -> statement.toString().startsWith("return productRepository.saveAndFlush(product);"))
+                .filter(statement -> statement.toString().contains("return productRepository.saveAndFlush(product)"))
                 .findFirst()
                 .ifPresent(returnStatement -> {
                     CtCodeSnippetStatement saveProductStatement = factory.Code().createCodeSnippetStatement(
@@ -226,7 +226,7 @@ public class LogInserter{
                     );
 
                     CtCodeSnippetStatement loggerStatement = factory.Code().createCodeSnippetStatement(
-                            "logger.info(\"{ \\\"user\\\": \\\"\" + userRepository.findById(userId).orElse(null).toString() + \"\\\", \\\"operate\\\": \\\"WRITE\\\", \\\"productId\\\": \" + product.getProductId() + \", \\n  \\\"productDetails\\\": \" + productRepository.findById(product.getProductId()).orElse(null).toString() + \"}\")");
+                            "logger.info(\"{ \\\"user\\\": \\\"\" + userRepository.findById(userId).orElse(null).toString() + \"\\\", \\\"operate\\\": \\\"WRITE\\\", \\\"productId\\\": \" + product.getProductId() + \", \\n  \\\"productDetails\\\": \" + productRepository.findById(product.getProductId()).orElse(null).toString() + \"}\");");
 
                     CtCodeSnippetStatement returnEntityStatement = factory.Code().createCodeSnippetStatement(
                             "return product;"
