@@ -4,9 +4,10 @@ public class ParsingMain {
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             // Récupérer le numéro du projet via l'entrée utilisateur
-            System.out.print("Donnez le chemin du code source à parser et logger : ");
-            String sourceDir = "/home/eric-gilles/Documents/M2/HAI913I-Evo-Restructuration-Log/TP3-Logging/src/main/java/com/example";// scanner.nextLine();
-
+            /* System.out.print("Donnez le chemin vers le code source de l'API : ");
+            String sourceDir = scanner.next();
+             */
+            String sourceDir = "src/main/java/com/example/";
             // Initialiser le parser Spoon
             SpoonParser parser = new SpoonParser(sourceDir);
             // Initialiser le transformateur InsertLogger
