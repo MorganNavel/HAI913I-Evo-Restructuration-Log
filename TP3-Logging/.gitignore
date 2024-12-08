@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Generated Spoon Code ###
+spooned/*
+src/main/generated/*

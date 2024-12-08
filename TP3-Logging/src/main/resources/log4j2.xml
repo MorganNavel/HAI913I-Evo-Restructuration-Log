@@ -22,7 +22,7 @@
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="generated.com.example.demo.controllers" level="info" additivity="false">
+        <Logger name="com.example.tp3logging.controllers" level="info" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Logger>

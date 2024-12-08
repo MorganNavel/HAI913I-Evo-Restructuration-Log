@@ -1,6 +1,6 @@
 package com.example.tp3logging.controllers;
 
-import com.example.tp3logging.dto.LoginCredential;
+import com.example.tp3logging.dto.LoginCredentials;
 import com.example.tp3logging.models.User;
 import com.example.tp3logging.repositories.UserRepository;
 import com.example.tp3logging.services.JWTService;
@@ -47,12 +47,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginCredential loginCredential, HttpServletRequest request) {
+    public ResponseEntity<String> login(@RequestBody LoginCredentials loginCredentials, HttpServletRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginCredential.getEmail(), loginCredential.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginCredentials.getEmail(), loginCredentials.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         request.getSession().setAttribute("user", authentication.getPrincipal()); // Add user to session
-        User user = userRepository.findByEmail(loginCredential.getEmail()).orElseThrow(
+        User user = userRepository.findByEmail(loginCredentials.getEmail()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed"));
         return ResponseEntity.ok(jwtService.generateToken(user));
     }

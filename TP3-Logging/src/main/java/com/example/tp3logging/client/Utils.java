@@ -26,7 +26,7 @@ public class Utils {
         System.out.println("1. Se connecter");
         System.out.println("2. S'inscrire");
         //System.out.println("3. Consulter les utilisateurs");
-        System.out.println("3. Simuler des scénarios utilisateurs");
+        System.out.println("3. Simuler des scénarios utilisateurs");  // lancez cette option qu'une seule fois
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }

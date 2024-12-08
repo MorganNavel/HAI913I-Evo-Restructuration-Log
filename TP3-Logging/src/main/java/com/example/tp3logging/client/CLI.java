@@ -1,25 +1,25 @@
 package com.example.tp3logging.client;
 
-import com.example.tp3logging.dto.LoginCredential;
+import com.example.tp3logging.dto.LoginCredentials;
 import com.example.tp3logging.models.Product;
 import com.example.tp3logging.models.User;
+import com.example.tp3logging.services.JWTService;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 import static com.example.tp3logging.client.Utils.getUserChoice;
 
 public class CLI {
     private static final String URL = "http://localhost:8080/api/";
-    private static String jwtToken = null;
-    private static Random random = new Random();
+    private static final String jwtToken = null;
+    private static String email = null;
+    private static final Random random = new Random();
+    private static final JWTService jwtService = new JWTService();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -38,6 +38,7 @@ public class CLI {
                     System.out.print("Mot de passe : ");
                     String password = scanner.nextLine();
                     if (login(email, password)) {
+                        CLI.email = email;
                         handleMenu(scanner);
                     }
                     break;
@@ -89,28 +90,29 @@ public class CLI {
         }
     }
 
-    private static void displayAllUsers() {
+    public static List<User> displayAllUsers() {
         RestTemplate restTemplate = new RestTemplate();
         User[] users = restTemplate.getForObject(URL + "users", User[].class);
-        if (users != null && users.length > 0) {
+        /*if (users != null && users.length > 0) {
             System.out.println("Liste des utilisateurs : ");
             Arrays.stream(users).forEach(System.out::println);
             System.out.println("\n\n");
         } else {
             System.out.println("Aucun utilisateur trouvé");
-        }
+        }*/
+        assert users != null;
+        return new ArrayList<>(Arrays.asList(users));
     }
 
     private static boolean login(String email, String password) {
         RestTemplate restTemplate = new RestTemplate();
-        LoginCredential loginCredential = new LoginCredential();
-        loginCredential.setEmail(email);
-        loginCredential.setPassword(password);
+        LoginCredentials loginCredentials = new LoginCredentials();
+        loginCredentials.setEmail(email);
+        loginCredentials.setPassword(password);
 
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(URL + "auth/login", loginCredential, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(URL + "auth/login", loginCredentials, String.class);
             if (response.getStatusCode() == HttpStatus.OK) {
-                jwtToken = response.getBody();
                 System.out.println("Vous êtes connecté");
                 return true;
             } else {
@@ -155,7 +157,8 @@ public class CLI {
         headers.setBearerAuth(jwtToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Product[]> response = new RestTemplate().exchange(URL + "products", HttpMethod.GET, entity, Product[].class);
+        String url = URL + "products?userId=" + jwtService.getUserIdFromToken(jwtToken, email);
+        ResponseEntity<Product[]> response = new RestTemplate().exchange(url, HttpMethod.GET, entity, Product[].class);
         Product[] products = response.getBody();
         if (products != null && products.length > 0) {
             System.out.println("\nListe des produits : ");
@@ -189,7 +192,8 @@ public class CLI {
         HttpEntity<Product> entity = new HttpEntity<>(product, headers);
 
         try {
-            ResponseEntity<String> response = new RestTemplate().postForEntity(URL + "products/product", entity, String.class);
+            String url = URL + "products/product?userId=" + jwtService.getUserIdFromToken(jwtToken, email);
+            ResponseEntity<String> response = new RestTemplate().postForEntity(url, entity, String.class);
             if (response.getStatusCode() == HttpStatus.CREATED) {
                 System.out.println("Produit ajouté avec succès");
             } else {
@@ -228,7 +232,8 @@ public class CLI {
             headers.setBearerAuth(jwtToken);
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            new RestTemplate().exchange(URL + "products/" + productId, HttpMethod.DELETE, entity, Void.class);
+            String url = URL + "products/" + productId + "?userId=" + jwtService.getUserIdFromToken(jwtToken, email);
+            new RestTemplate().exchange(url, HttpMethod.DELETE, entity, Void.class);
             System.out.println("\n Le produit " + product.getName() + " a été supprimé");
         } else {
             System.out.println("Produit non trouvé");
@@ -241,7 +246,8 @@ public class CLI {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
-            ResponseEntity<Product> response = new RestTemplate().exchange(URL + "products/" + productId, HttpMethod.GET, entity, Product.class);
+            String url = URL + "products/" + productId + "?userId=" + jwtService.getUserIdFromToken(jwtToken, email);
+            ResponseEntity<Product> response = new RestTemplate().exchange(url, HttpMethod.GET, entity, Product.class);
             return response.getBody();
         } catch (Exception e) {
             System.err.println("Erreur lors de la récupération du produit : " + e.getMessage());
@@ -255,7 +261,7 @@ public class CLI {
         System.out.println("\nSimulation de scénarios utilisateurs");
         System.out.println("----------------------------");
         System.out.println("Création de 5 utilisateurs");
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 4; i <= 9; i++) {
             String email = "user" + i + "@example.com";
             String password = "password" + i;
             String name = "User" + i;
@@ -270,10 +276,10 @@ public class CLI {
             restTemplate.postForEntity(URL + "auth/register", user, String.class);
 
             // Login user
-            LoginCredential loginCredential = new LoginCredential();
-            loginCredential.setEmail(email);
-            loginCredential.setPassword(password);
-            ResponseEntity<String> response = restTemplate.postForEntity(URL + "auth/login", loginCredential, String.class);
+            LoginCredentials loginCredentials = new LoginCredentials();
+            loginCredentials.setEmail(email);
+            loginCredentials.setPassword(password);
+            ResponseEntity<String> response = restTemplate.postForEntity(URL + "auth/login", loginCredentials, String.class);
             String token = response.getBody();
 
             // Perform operations
@@ -283,36 +289,39 @@ public class CLI {
                 switch (operation) {
                     case 1:
                         System.out.print(" Affichage de tous les produits\n");
-                        displayProducts(token);
+                        displayProducts(token, email);
                         break;
                     case 2:
                         System.out.print(" Ajout de produit\n");
-                        addProduct(token, "Product" + j, 10.0 * j, "01-01-2025");
+                        addProduct(token, email, "Product" + j, 10.0 * j, "01-01-2025");
                         break;
                     case 3:
                         System.out.print(" Recherche de produit par ID\n");
-                        getProductById(token, j);
+                        getProductById(token, email, j);
                         break;
                     case 4:
                         System.out.print("Suppression de produit par ID\n");
-                        deleteProductById(token, j);
+                        deleteProductById(token, email, j);
                         break;
                     default:
                         break;
                 }
             }
+            // Suppression des utilisateurs
+            restTemplate.exchange(URL + "users/" + i, HttpMethod.DELETE, new HttpEntity<>(new HttpHeaders()), Void.class);
         }
         System.out.println("----------------------------\n\n");
     }
 
-    private static void displayProducts(String token) {
+    private static void displayProducts(String token, String email) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        new RestTemplate().exchange(URL + "products", HttpMethod.GET, entity, Product[].class);
+        String url = URL + "products?userId=" + jwtService.getUserIdFromToken(token, email);
+        new RestTemplate().exchange(url, HttpMethod.GET, entity, Product[].class);
     }
 
-    private static void addProduct(String token, String name, double price, String expirationDate) {
+    private static void addProduct(String token, String email, String name, double price, String expirationDate) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
@@ -322,20 +331,23 @@ public class CLI {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         HttpEntity<Product> entity = new HttpEntity<>(product, headers);
-        new RestTemplate().postForEntity(URL + "products/product", entity, String.class);
+        String url = URL + "products/product?userId=" + jwtService.getUserIdFromToken(token, email);
+        new RestTemplate().postForEntity(url, entity, String.class);
     }
 
-    private static void getProductById(String token, int productId) {
+    private static void getProductById(String token, String email, int productId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        new RestTemplate().exchange(URL + "products/" + productId, HttpMethod.GET, entity, Product.class);
+        String url = URL + "products/" + productId + "?userId=" + jwtService.getUserIdFromToken(token, email);
+        new RestTemplate().exchange(url, HttpMethod.GET, entity, Product.class);
     }
 
-    private static void deleteProductById(String token, int productId) {
+    private static void deleteProductById(String token, String email, int productId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        new RestTemplate().exchange(URL + "products/" + productId, HttpMethod.DELETE, entity, Void.class);
+        String url = URL + "products/" + productId + "?userId=" + jwtService.getUserIdFromToken(token, email);
+        new RestTemplate().exchange(url, HttpMethod.DELETE, entity, Void.class);
     }
 }

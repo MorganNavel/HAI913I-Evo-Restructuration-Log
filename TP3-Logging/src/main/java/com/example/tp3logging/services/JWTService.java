@@ -5,11 +5,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.example.tp3logging.client.CLI;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class JWTService {
@@ -71,9 +71,19 @@ public class JWTService {
      * @param token the JWT token
      * @return the user ID if the token is valid, otherwise -1
      */
-    public int getUserIdFromToken(String token) {
+    public long getUserIdFromToken(String token, String email) {
         if (validateToken(token)) {
-            return Integer.parseInt(JWT.decode(token).getSubject());
+            return Long.parseLong(JWT.decode(token).getSubject());
+        }
+        return getUserId(email);
+    }
+
+    private long getUserId(String email) {
+        List<User> users = CLI.displayAllUsers();
+        for (User user : users) {
+            if (user.getEmail().equals(email)) {
+                return user.getUserId();
+            }
         }
         return -1;
     }

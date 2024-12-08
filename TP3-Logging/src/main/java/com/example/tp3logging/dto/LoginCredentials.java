@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Data
 @ToString(exclude = "password")
-public class LoginCredential {
+public class LoginCredentials {
     @Email(message = "Email should be valid")
     private String email;
     private String password;

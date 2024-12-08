@@ -16,14 +16,16 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public ProductController(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
-    public List<Product> list() {
+    public List<Product> listProducts() {
         return productRepository.findAll();
     }
 
