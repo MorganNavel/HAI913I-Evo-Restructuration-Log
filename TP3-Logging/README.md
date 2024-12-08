@@ -18,6 +18,11 @@ Ce TP est composé de 2 parties :
 ## Prérequis
 - Java 11
 - Maven
+- Ajouter votre clé JWT dans le fichier `application.properties` situé dans le répertoire `src/main/resources/` en remplaçant : `{YOUR_SECRET_KEY}` par votre clé JWT.
+
+```properties
+JWT_SECRET={YOUR_SECRET_KEY}
+```
 
 ### Installation
 1. Télécharger le zip du projet à l'adresse suivante :  
