@@ -93,12 +93,7 @@
 	        <version>10.3.0</version>
     	</dependency>
 
-		<dependency>
-        	<groupId>javax.servlet</groupId>
-        	<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version>
-        	<scope>provided</scope>
-    	</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -120,7 +115,7 @@
 		<!-- Spoon & Logging generated code from the API -->
 		<sourceDirectory>src/main/generated/</sourceDirectory>
 		<!-- API Source code without Spoon & Logging -->
-		<!--<sourceDirectory>src/main/java/</sourceDirectory>-->
+<!--		<sourceDirectory>src/main/java/</sourceDirectory>-->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

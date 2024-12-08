@@ -54,13 +54,13 @@ public class LogInserter{
 
         // Vérifier si la méthode est un endpoint d'authentification
         if (method.getParent(CtClass.class).getSimpleName().equals("AuthController")) {
-            logBuilder.append("\"{");
-            logBuilder.append("  \\\"operation\\\": \\\"").append(operationType).append("\\\"");
-            logBuilder.append("}\"");
-            CtCodeSnippetStatement logStatement = factory.Code().createCodeSnippetStatement(
-                    String.format("logger.info(%s)", logBuilder)
-            );
-            method.getBody().insertBegin(logStatement);
+//            logBuilder.append("\"{");
+//            logBuilder.append("  \\\"operation\\\": \\\"").append(operationType).append("\\\"");
+//            logBuilder.append("}\"");
+//            CtCodeSnippetStatement logStatement = factory.Code().createCodeSnippetStatement(
+//                    String.format("logger.info(%s)", logBuilder)
+//            );
+//            method.getBody().insertBegin(logStatement);
             return;
         }
 
@@ -71,22 +71,21 @@ public class LogInserter{
         }
 
 
+
         // Extraction des paramètres pour userId et productId
         for (CtParameter<?> parameter : method.getParameters()) {
             String paramName = parameter.getSimpleName();
-            String userDetails = fetchUserDetails(paramName.equalsIgnoreCase("user") ? "user.getUserId()" : "userId");
-            String productDetails = fetchProductDetails(paramName.equalsIgnoreCase("product") ? "product.getProductId()" : "productId");
+            String userId = paramName.equalsIgnoreCase("user") ? "user.getUserId()" : "userId";
+            String productId = paramName.equalsIgnoreCase("product") ? "product.getProductId()" : "productId";
+            String userDetails = fetchUserDetails(userId);
+            String productDetails = fetchProductDetails(productId);
 
             logBuilder.append("\"{");
             if (paramName.equalsIgnoreCase("userId") || paramName.equalsIgnoreCase("user")) {
 
                 // Log statement for user
-                logBuilder.append("  \\\"user\\\": ").append("\\\"userDetails\\\": \" +").append(userDetails).append("+ \"");
-                logBuilder.append("  \\\"operate\\\": \\\"").append(operationType).append("\\\"");
-                logBuilder.append(",  \\\"userId\\\": \" + ")
-                        .append(paramName.equalsIgnoreCase("user") ? "user.getUserId()" : "userId")
-                        .append(" + \"");
-                logBuilder.append(",  \\\"userDetails\\\": \" +").append(userDetails).append("+ \"");
+                logBuilder.append("  \\\"userId\\\":\"+ ").append(userId).append("+\", \\\"userDetails\\\": \" +").append(userDetails).append("+ \"");
+                logBuilder.append(",  \\\"operation\\\": \\\"").append(operationType).append("\\\"");
                 logBuilder.append("}\"");
 
                 // Create the log statement
@@ -96,13 +95,10 @@ public class LogInserter{
                 method.getBody().insertBegin(logStatement);
                 break;
             } else if (paramName.equalsIgnoreCase("productId") || paramName.equalsIgnoreCase("product")) {
-
                 // Log statement for product
-                logBuilder.append("  \\\"user\\\": ").append("\\\"userDetails\\\": \" +").append(userDetails).append("+ \"");
-                logBuilder.append("  \\\"operate\\\": \\\"").append(operationType).append("\\\"");
-                logBuilder.append(",  \\\"productId\\\": \" + ")
-                        .append(paramName.equalsIgnoreCase("product") ? "product.getProductId()" : "productId")
-                        .append(" + \"");
+                logBuilder.append("  \\\"userId\\\":\"+ ").append(userId).append("+\", \\\"userDetails\\\": \" +").append(userDetails).append("+ \"");
+                logBuilder.append(",  \\\"operation\\\": \\\"").append(operationType).append("\\\"");
+                logBuilder.append(",  \\\"productId\\\": \" + ").append(productId).append(" + \"");
                 logBuilder.append(",\\n  \\\"productDetails\\\": \" +").append(productDetails).append("+ \"");
                 logBuilder.append("}\"");
 
@@ -200,10 +196,9 @@ public class LogInserter{
                     // Create a for loop to log each entity
                     CtCodeSnippetStatement forLoopStatement = factory.Code().createCodeSnippetStatement(
                             "for (" + entityType + " " + entityType.toLowerCase() + " : " + entityType.toLowerCase() + "s) {\n"
-                                    + "    logger.info(\"{ \\\"user\\\": \\\"\" + userId + \"\\\", \\\"userDetails\\\": \" + userRepository.findById(userId).orElse(null).toString() + \", \\\"operation\\\": \\\"READ\\\", \\\""
+                                    + "    logger.info(\"{ \\\"userId\\\": \" + userId + \", \\\"userDetails\\\": \" + userRepository.findById(userId).orElse(null).toString() + \", \\\"operation\\\": \\\"READ\\\", \\\""
                                     + entityType.toLowerCase() + "Id\\\": \" + " + entityType.toLowerCase()
-                                    + ".get" + entityType + "Id() + \", " + "\\\"" + entityType.toLowerCase()
-                                    + "Name\\\": \\\"\" + " + entityType.toLowerCase() + ".getName() + \"\\\" }\");\n"
+                                    + ".get" + entityType + "Id() + \" }\");\n"
                                     + "}"
                     );
 

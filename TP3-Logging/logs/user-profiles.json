@@ -1,18 +1,98 @@
 {
-  "1" : {
-    "userId" : 1,
-    "readCount" : 3,
+  "4" : {
+    "userId" : 4,
+    "readCount" : 6,
     "writeCount" : 0,
-    "productPrices" : [ 15.6, 3.5 ],
+    "productPrices" : [ ],
     "user" : {
-      "userId" : 1,
-      "name" : "user1",
-      "email" : "user1@gmail.com",
-      "password" : "mypassword",
-      "age" : 21
+      "userId" : 4,
+      "name" : "User4",
+      "email" : "user4@example.com",
+      "password" : "$2a$10$oDv2J5BNi0Y73G4giIVQtuHuLXtCkEjqksZBBIp5e7r1th.VlO8/G",
+      "age" : 24
     },
     "boughtMostExpensive" : false,
     "mostlyRead" : true,
     "mostlyWrite" : false
+  },
+  "5" : {
+    "userId" : 5,
+    "readCount" : 4,
+    "writeCount" : 0,
+    "productPrices" : [ ],
+    "user" : {
+      "userId" : 5,
+      "name" : "User5",
+      "email" : "user5@example.com",
+      "password" : "$2a$10$y2G84UTuq8/NB23FQDY2L.NH5VBh.uP3.w4yR.lnfQSGg4eT.hnDy",
+      "age" : 25
+    },
+    "boughtMostExpensive" : false,
+    "mostlyRead" : true,
+    "mostlyWrite" : false
+  },
+  "6" : {
+    "userId" : 6,
+    "readCount" : 2,
+    "writeCount" : 0,
+    "productPrices" : [ 15.6, 3.5 ],
+    "user" : {
+      "userId" : 6,
+      "name" : "User6",
+      "email" : "user6@example.com",
+      "password" : "$2a$10$8RNkemzGnHJGWC3bFEq4ae8bSv.YCoD.zw6fYONOauIy83wwD9P0u",
+      "age" : 26
+    },
+    "boughtMostExpensive" : false,
+    "mostlyRead" : true,
+    "mostlyWrite" : false
+  },
+  "7" : {
+    "userId" : 7,
+    "readCount" : 5,
+    "writeCount" : 0,
+    "productPrices" : [ 15.6 ],
+    "user" : {
+      "userId" : 7,
+      "name" : "User7",
+      "email" : "user7@example.com",
+      "password" : "$2a$10$3YYcdn3iW4H1y7PYvu05FOJ7C9zgoCQeTzvs2iceaqfGT87fBGCom",
+      "age" : 27
+    },
+    "boughtMostExpensive" : false,
+    "mostlyRead" : true,
+    "mostlyWrite" : false
+  },
+  "8" : {
+    "userId" : 8,
+    "readCount" : 0,
+    "writeCount" : 0,
+    "productPrices" : [ ],
+    "user" : {
+      "userId" : 8,
+      "name" : "User8",
+      "email" : "user8@example.com",
+      "password" : "$2a$10$xBwsRA2UZ/KYxw7zaVbwQuJwJBrTtkufYDELRGCo.Eui4I/DT6YiW",
+      "age" : 28
+    },
+    "boughtMostExpensive" : false,
+    "mostlyRead" : true,
+    "mostlyWrite" : true
+  },
+  "9" : {
+    "userId" : 9,
+    "readCount" : 0,
+    "writeCount" : 0,
+    "productPrices" : [ ],
+    "user" : {
+      "userId" : 9,
+      "name" : "User9",
+      "email" : "user9@example.com",
+      "password" : "$2a$10$a3bEeVeTgVT8/A8PaTy97.Y5KB9ANE58Wj8HTBjsAmKwwLWDhXxvC",
+      "age" : 29
+    },
+    "boughtMostExpensive" : false,
+    "mostlyRead" : true,
+    "mostlyWrite" : true
   }
 }
