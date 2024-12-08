@@ -226,10 +226,10 @@ public class LogInserter{
                     );
 
                     CtCodeSnippetStatement loggerStatement = factory.Code().createCodeSnippetStatement(
-                            "logger.info(\"{ \\\"user\\\": \\\"\" + userRepository.findById(userId).orElse(null).toString() + \"\\\", \\\"operate\\\": \\\"WRITE\\\", \\\"productId\\\": \" + product.getProductId() + \", \\n  \\\"productDetails\\\": \" + productRepository.findById(product.getProductId()).orElse(null).toString() + \"}\");");
+                            "logger.info(\"{ \\\"user\\\": \\\"\" + userRepository.findById(userId).orElse(null).toString() + \"\\\", \\\"operate\\\": \\\"WRITE\\\", \\\"productId\\\": \" + product.getProductId() + \", \\n  \\\"productDetails\\\": \" + productRepository.findById(product.getProductId()).orElse(null).toString() + \"}\")");
 
                     CtCodeSnippetStatement returnEntityStatement = factory.Code().createCodeSnippetStatement(
-                            "return product;"
+                            "return product"
                     );
 
                     // Replace the existing return statement with the correct code
